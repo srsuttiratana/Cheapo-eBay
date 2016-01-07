@@ -4,7 +4,7 @@ import java.security.*;
 public class ComputeSHA {
 
 	public static void main(String[] args) throws Exception {
-		MessageDigest message_digest = MessageDigest.getInstance("SHA-1");
+	MessageDigest message_digest = MessageDigest.getInstance("SHA-1");
         FileInputStream file_input_stream = new FileInputStream(args[0]);
         
         byte[] dataBytes = new byte[1024];
