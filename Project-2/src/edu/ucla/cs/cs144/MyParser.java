@@ -69,14 +69,16 @@ class MyParser {
     	//TODO: Fill this out (and other helper classes if necessary)
     	String user_id;
     	String user_location;
+    	String user_country;
     	String user_seller_rating;
     	String user_bidder_rating;
     	
     	//constructor
-    	User(String user_id, String user_location, String user_seller_rating, String user_bidder_rating)
+    	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
     	{
     		this.user_id = user_id;
     		this.user_location = user_location;
+    		this.user_country = user_country;
     		this.user_seller_rating = user_seller_rating;
     		this.user_bidder_rating = user_bidder_rating;
     	}
