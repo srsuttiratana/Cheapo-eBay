@@ -26,6 +26,7 @@
 package edu.ucla.cs.cs144;
 
 import java.io.*;
+
 import java.text.*;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -61,6 +62,31 @@ class MyParser {
 	"DocFragment",
 	"Notation",
     };
+    
+    public static class User
+    {
+    	//TODO: Fill this out (and other helper classes if necessary)
+    }
+    
+    static String convert_To_SQL_DateTime(String XML_DateTime)
+    {
+        SimpleDateFormat old_format = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        SimpleDateFormat new_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date old_formatted_date;
+        String new_date = "";
+        
+        try
+        {
+        	old_formatted_date = old_format.parse(XML_DateTime);
+        	new_date = new_format.format(old_formatted_date);
+        }
+        catch(ParseException e)
+        {
+        	System.out.println("Couldn't convert the date correctly.");
+        }
+        return new_date;   	
+    }
+    
     
     static class MyErrorHandler implements ErrorHandler {
         
