@@ -2,6 +2,7 @@
 <html>
 <head>
 <style>
+
 #header {
    background-color: yellow;
    font-size: 35pt;
@@ -14,6 +15,11 @@
    top: 0;
    left: 0;
 }
+
+#my_table{
+    margin-top:65px; //moves your table 10pixels down
+}
+
 #footer {
    background-color: cyan;
    width: 100%;
@@ -25,34 +31,49 @@
    right: 0;
 }
 
-#content1 {
-   float: left;
-   width: calc(100% - 50% - 1em);
-   height: calc(100% - 80px - 1em);
- 
-   position: fixed;
-   top: 80px;
-   left: 1em;
-   overflow: auto;
+h1 {
+  font-size: 1.75rem;
+  margin: 0 0 0.75rem 0;
 }
-#content2{
-   float: left;
-   width: 50%;
-   height: calc(100% - 80px - 1em);
- 
-   position: fixed;
-   top: 80px;
-   left: 1em;
-   overflow: auto;
+
+// Pattern styles
+.container {
+  display: table;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  top: 80px;
+}
+
+div {
+  
+}
+
+.left-half {
+display: table-cell;
+  text-align: left;
+  width: 50%;
+  padding:0px .5em 0px 1em;
+}
+
+.right-half {
+display: table-cell;
+  text-align: left;
+  width: 50%;
+  padding:0px 1em 0px .5em;
 }
 </style>
 </head>
 <body>
-<div id="header">This is Header</div>
-<div id="footer">© Copyright by University of California, Los Angeles (UCLA)</div>
 
-<div id="content1">
-<h2>Course Description</h2>
+<div id="header">CSS Layout Project</div>
+<div id="footer">(C) Copyright by University of California, Los Angeles (UCLA)</div>
+
+<div id = "my_table">
+<section class="container">
+  <div class="left-half">
+    <article>
+      <h1>Course Description</h1>
 		<p>Developing today's Web applications requires knowledge on a number of diverse topics, including the basic Web architecture, XML, relational database, information retrieval, security and user models. Traditionally, these topics have been taught in different subdiscplines of computer science, so students had to take a fair number of courses to learn the basic concepts necessary to build effective and safe Web applications. The goal of this class is to teach students the most important concepts for building Web applications and give them the first-hand experience with the basic tools for such a task.</p>
 		<p>The topics that will be covered in the class include:</p>
 		<ul>
@@ -64,10 +85,11 @@
 			<li>Web services and distributed transactions</li>
 		</ul>
 		<p>To help students digest the materials learned in the class, we will assign a quarter-long class project (which will be divided into multiple subparts), in which students have to build a Web service and a Web site that help users navigate an eBay data. The dataset together with the basic tools will be provided on the class Web site.</p>
-</div>
-
-<div id = "content2">
-<h1>Academic Integrity</h1>
+    </article>
+  </div>
+  <div class="right-half">
+    <article>
+      <h2>Academic Integrity</h2>
 <p>
 At <a href="http://www.studentgroups.ucla.edu/dos/students/integrity"
 target="_blank">http://www.studentgroups.ucla.edu/dos/students/integrity</a>,
@@ -129,7 +151,9 @@ A typical penalty for a first plagiarism offense is
  suspension for one or more quarters.  A second offense usually
  results in dismissal from the University of California. 
 </p>
-</div>
+    </article>
+  </div>
+</section>
 </div>
 </body>
 </html>
