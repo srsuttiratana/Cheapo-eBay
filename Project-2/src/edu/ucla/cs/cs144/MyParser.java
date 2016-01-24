@@ -26,7 +26,6 @@
 package edu.ucla.cs.cs144;
 
 import java.io.*;
-
 import java.text.*;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -63,9 +62,24 @@ class MyParser {
 	"Notation",
     };
     
+    ///////////////////////////////////NEW IMPLEMENTATIONS//////////////////////////////////////
+    
     public static class User
     {
     	//TODO: Fill this out (and other helper classes if necessary)
+    	String user_id;
+    	String user_location;
+    	String user_seller_rating;
+    	String user_bidder_rating;
+    	
+    	//constructor
+    	User(String user_id, String user_location, String user_seller_rating, String user_bidder_rating)
+    	{
+    		this.user_id = user_id;
+    		this.user_location = user_location;
+    		this.user_seller_rating = user_seller_rating;
+    		this.user_bidder_rating = user_bidder_rating;
+    	}
     }
     
     static String convert_To_SQL_DateTime(String XML_DateTime)
@@ -87,6 +101,7 @@ class MyParser {
         return new_date;   	
     }
     
+    ////////////////////////END OF NEW IMPLEMENTED FUNCTIONS//////////////////////////////
     
     static class MyErrorHandler implements ErrorHandler {
         
