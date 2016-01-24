@@ -62,27 +62,67 @@ class MyParser {
 	"Notation",
     };
     
-    ///////////////////////////////////NEW IMPLEMENTATIONS//////////////////////////////////////
-    
-    public static class User
-    {
-    	//TODO: Fill this out (and other helper classes if necessary)
-    	String user_id;
-    	String user_location;
-    	String user_country;
-    	String user_seller_rating;
-    	String user_bidder_rating;
-    	
-    	//constructor
-    	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
-    	{
-    		this.user_id = user_id;
-    		this.user_location = user_location;
-    		this.user_country = user_country;
-    		this.user_seller_rating = user_seller_rating;
-    		this.user_bidder_rating = user_bidder_rating;
-    	}
-    }
+    ///////////////////////////////////NEW HELPER IMPLEMENTATIONS//////////////////////////////////////
+    //store the User ID as the key and User
+  	static Map<String, User> user_map = new HashMap<String, User>();
+  	
+  	//store the Item ID as the key and a distinct Set of Categories
+  	static Map<String, Set<String>> category_map = new HashMap<String, Set<String>>();
+  	
+  	//store the bid keys so that we know whether there are duplicate bids
+  	static Set<String> bid_set = new HashSet<String>();
+  	
+  	public static class User
+      {
+  		//TODO: Fill this out (and other helper classes if necessary)
+      	String user_id;
+      	String user_location;
+      	String user_country;
+      	String user_seller_rating;
+      	String user_bidder_rating;
+      	
+      	//constructor
+      	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
+      	{
+      		this.user_id = user_id;
+      		this.user_location = user_location;
+      		this.user_country = user_country;
+      		this.user_seller_rating = user_seller_rating;
+      		this.user_bidder_rating = user_bidder_rating;
+      	}
+      	
+      	public void change_location(String location)
+      	{
+      		user_location = location;
+      	}
+      	
+      	public void change_country(String country)
+      	{
+      		user_country = country;
+      	}
+      	
+      	public void change_seller_rating(String rating)
+      	{
+      		user_seller_rating = rating;
+      	}
+      	
+      	public void change_bidder_rating(String rating)
+      	{
+      		user_bidder_rating = rating;
+      	}
+      	
+      	public void write_to_user_stream(BufferedWriter user) throws IOException
+      	{
+      		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s\n", 
+      				user_id,
+                      user_location,
+                      user_country,
+                      user_seller_rating,
+                      user_bidder_rating);
+               
+               user.write(row); 
+      	}
+      }
     
     static String convert_To_SQL_DateTime(String XML_DateTime)
     {
@@ -103,7 +143,7 @@ class MyParser {
         return new_date;   	
     }
     
-    ////////////////////////END OF NEW IMPLEMENTED FUNCTIONS//////////////////////////////
+    ////////////////////////END OF NEW IMPLEMENTED HELPER FUNCTIONS//////////////////////////////
     
     static class MyErrorHandler implements ErrorHandler {
         
