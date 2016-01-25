@@ -458,10 +458,12 @@ class MyParser {
         	Element seller = getElementByTagNameNR(item, "Seller");
         	String seller_id = seller.getAttribute("UserID");
         	String seller_rating = seller.getAttribute("Rating");
+        	
         	User u = user_map.get(seller_id);
         	if(u != null)	//seller already exists in user_map
         	{
         		u.user_seller_rating = seller_rating;
+        		user_map.put(seller_id, u);
         	}
         	else
         	{	//User Constructor:
@@ -478,13 +480,48 @@ class MyParser {
         	//TODO: bids
         	/*
         	 	String bidder_id;
-  				String bid_time;
-  				String bid_amount;
-  				String item_id;
+        		String bid_time;
+        		String bid_amount;
+        		String item_id;
         	 */
         	
-        	Element[] bids = getElementsByTagNameNR(item, "Bids");
+        	Element bids_parent = getElementByTagNameNR(item, "Bids");
+        	Element[] bids = getElementsByTagNameNR(bids_parent, "Bid");
         	//TODO: get all the bids
+        	for(Element bid : bids)
+        	{
+        		Element e_bidder = getElementByTagNameNR(bid, "Bidder");
+        		String bidder_rating = e_bidder.getAttribute("Rating");
+        		String bidder_id = e_bidder.getAttribute("UserID");
+        		String bidder_loc = getElementTextByTagNameNR(e_bidder, "Location");
+        		String bidder_country = getElementTextByTagNameNR(e_bidder, "Country");
+        		
+        		String bid_time = convert_To_SQL_DateTime(getElementTextByTagNameNR(bid, "Time"));
+        		String bid_amount = strip(getElementTextByTagNameNR(bid, "Amount"));
+        		
+        		//add to bid_map
+        		String bid_key = bidder_id + bid_time + item_id;
+        		if(!bid_map.containsKey(bid_key))
+        		{
+        			bid_map.put(bid_key, new Bid(bidder_id, bid_time, bid_amount, item_id));
+        		}
+        		
+        		//add to user_map
+        		if(!user_map.containsKey(bidder_id))
+        		{
+        			//User(String user_id, String user_location, String user_country, 
+        			//String user_seller_rating, String user_bidder_rating)
+        			user_map.put(bidder_id, new User(bidder_id, bidder_loc, bidder_country, "", bidder_rating));
+        		}
+        		else	//update existing user
+        		{
+        			User u_temp = user_map.get(bid_key);
+        			u_temp.user_bidder_rating = bidder_rating;
+        			u_temp.user_country = bidder_country;
+        			u_temp.user_location = bidder_loc;
+        			user_map.put(bidder_id, u_temp);
+        		}
+        	}
         	
         	//TODO: categories
         	Element[] categories = getElementsByTagNameNR(item, "Category");
@@ -499,10 +536,11 @@ class MyParser {
         		}
         		else
         		{
-        			category_map.get(item_id).add(cat_name);
+        			Set<String> c_set = category_map.get(item_id);
+        			c_set.add(cat_name);
+        			category_map.put(item_id, c_set);
         		}
         	}
-        	
         }
 
 
