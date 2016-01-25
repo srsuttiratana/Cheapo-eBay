@@ -161,6 +161,7 @@ class MyParser {
 	public static class Item
 	{
 		String item_id;
+		String name;
 		String currently;
 		String buy_price;
 		String first_bid;
