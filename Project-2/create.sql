@@ -1,0 +1,26 @@
+--Add User Table here--
+
+
+
+
+
+
+
+CREATE TABLE Item (
+ItemID INTEGER NOT NULL,
+Name VARCHAR(100),
+Currently DECIMAL(8,2) NOT NULL,
+Buy_Price DECIMAL (8,2) NOT NULL,
+First_Bid DECIMAL (8,2) NOT NULL,
+Number_of_Bids INTEGER,
+Location VARCHAR(50) DEFAULT NULL,
+Longitude VARCHAR(50) DEFAULT NULL,
+Latitude VARCHAR(50) DEFAULT NULL,
+Country VARCHAR(30) DEFAULT NULL,
+Started TIMESTAMP,
+Ends TIMESTAMP,
+SellerID VARCHAR(100),
+Description VARCHAR(4000),
+PRIMARY KEY(ItemID),
+FOREIGN KEY(SellerID) REFERENCES User(UserID)
+);
