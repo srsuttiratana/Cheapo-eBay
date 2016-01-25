@@ -519,7 +519,7 @@ class MyParser {
         		}
         		else	//update existing user
         		{
-        			User u_temp = user_map.get(bid_key);
+        			User u_temp = user_map.get(bidder_id);
         			u_temp.user_bidder_rating = bidder_rating;
         			u_temp.user_country = bidder_country;
         			u_temp.user_location = bidder_loc;
