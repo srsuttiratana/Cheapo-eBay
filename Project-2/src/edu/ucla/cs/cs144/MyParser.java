@@ -174,7 +174,7 @@ class MyParser {
 		String seller_id;
 		String description;
 		
-		Item(String item_id, String currently, String buy_price, String first_bid, String num_of_bids, String location,
+		Item(String item_id, String name, String currently, String buy_price, String first_bid, String num_of_bids, String location,
 				String longitude,
 				String latitude,
 				String country,
@@ -184,6 +184,7 @@ class MyParser {
 				String description)
 		{
 					this.item_id = item_id;
+					this.name = name;
 					this.currently = currently;
 					if(buy_price.isEmpty()){
 						this.buy_price = "";
@@ -229,8 +230,9 @@ class MyParser {
 		
 		public void write_to_item_stream(BufferedWriter item) throws IOException
       	{
-      		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s\n", 
+      		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s\n", 
       				item_id,
+      				name,
       				currently,
       				buy_price,
       				first_bid,
@@ -440,6 +442,7 @@ class MyParser {
         		String description;
         	 */
         	String item_id = item.getAttribute("ItemID");
+        	String name = getElementTextByTagNameNR(item, "Name");
         	String currently = strip(getElementTextByTagNameNR(item, "Currently"));
         	String buy_price = strip(getElementTextByTagNameNR(item, "Buy_Price"));
         	String first_bid = strip(getElementTextByTagNameNR(item, "First_Bid"));
@@ -474,7 +477,7 @@ class MyParser {
         	
         	String description = getElementTextByTagNameNR(item, "Description");
         	
-        	item_map.put(item_id, new Item(item_id, currently, buy_price, first_bid, num_of_bids, 
+        	item_map.put(item_id, new Item(item_id, name, currently, buy_price, first_bid, num_of_bids, 
         			location, longitude, latitude, country, started, ends, seller_id, description));
         	
         	//TODO: bids
