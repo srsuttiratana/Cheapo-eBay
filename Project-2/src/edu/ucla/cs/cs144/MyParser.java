@@ -98,26 +98,6 @@ class MyParser {
       		this.user_bidder_rating = user_bidder_rating;
       	}
       	
-      	public void change_location(String location)
-      	{
-      		user_location = location;
-      	}
-      	
-      	public void change_country(String country)
-      	{
-      		user_country = country;
-      	}
-      	
-      	public void change_seller_rating(String rating)
-      	{
-      		user_seller_rating = rating;
-      	}
-      	
-      	public void change_bidder_rating(String rating)
-      	{
-      		user_bidder_rating = rating;
-      	}
-      	
       	public void write_to_user_stream(BufferedWriter user) throws IOException
       	{
       		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s\n", 
