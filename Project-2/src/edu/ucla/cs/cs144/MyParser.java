@@ -458,8 +458,24 @@ class MyParser {
         	Element seller = getElementByTagNameNR(item, "Seller");
         	String seller_id = seller.getAttribute("UserID");
         	String seller_rating = seller.getAttribute("Rating");
+        	User u = user_map.get(seller_id);
+        	if(u != null)	//seller already exists in user_map
+        	{
+        		u.user_seller_rating = seller_rating;
+        	}
+        	else
+        	{	//User Constructor:
+        		//User(String user_id, String user_location, String user_country, 
+        		//String user_seller_rating, String user_bidder_rating)
+        		user_map.put(seller_id, new User(seller_id, "", "", seller_rating, ""));
+        	}
         	
         	String description = getElementTextByTagNameNR(item, "Description");
+        	
+        	item_map.put(item_id, new Item(item_id, currently, buy_price, first_bid, num_of_bids, 
+        			location, longitude, latitude, country, started, ends, seller_id, description));
+        	
+        	
         	
         	//TODO: bids
         	
