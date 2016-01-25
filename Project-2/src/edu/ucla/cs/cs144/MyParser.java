@@ -66,10 +66,17 @@ class MyParser {
     //store the User ID as the key and User
   	static Map<String, User> user_map = new HashMap<String, User>();
   	
+  	//store the bids using a key string of bidder_id + time + item_id
+  	static Map<String, Bid> bid_map = new HashMap<String, Bid>();
+  	
+  	//store the items with item_id as the key string
+  	static Map<String, Item> item_map = new HashMap<String, Item>();
+  	
   	//store the Item ID as the key and a distinct Set of Categories
   	static Map<String, Set<String>> category_map = new HashMap<String, Set<String>>();
   	
   	//store the bid keys so that we know whether there are duplicate bids
+  	//optional
   	static Set<String> bid_set = new HashSet<String>();
   	
   	public static class User
@@ -123,6 +130,118 @@ class MyParser {
                user.write(row); 
       	}
       }
+  	
+  	public static class Bid
+  	{
+  		String bidder_id;
+  		String bid_time;
+  		String bid_amount;
+  		String item_id;
+  		
+  		Bid(String bidder_id, String bid_time, String bid_amount, String item_id)
+  		{
+  			this.bidder_id = bidder_id;
+  			this.bid_time = bid_time;
+  			this.bid_amount = bid_amount;
+  			this.item_id = item_id;
+  		}
+  		
+  		public void write_to_bid_stream(BufferedWriter bid) throws IOException
+      	{
+      		String row = String.format("%s |*| %s |*| %s |*| %s\n", 
+      				  bidder_id,
+                      bid_time,
+                      bid_amount,
+                      item_id);
+               
+               bid.write(row); 
+      	}
+  	}
+	
+	public static class Item
+	{
+		String item_id;
+		String currently;
+		String buy_price;
+		String first_bid;
+		String num_of_bids;
+		String location;
+		String longitude;
+		String latitude;
+		String country;
+		String started;
+		String ends;
+		String seller_id;
+		String description;
+		
+		Item(String item_id, String currently, String buy_price, String first_bid, String num_of_bids, String location,
+		String longitude,
+		String latitude,
+		String country,
+		String started,
+		String ends,
+		String seller_id,
+		String description)
+		{
+			this.item_id = item_id;
+			this.currently = currently;
+			this.buy_price =  buy_price;
+			this.first_bid = first_bid;
+			this.num_of_bids = num_of_bids;
+			this.location = location;
+			this.longitude = longitude;
+			this.latitude = latitude;
+			this.country = country;
+			this.started = started;
+			this.ends = ends;
+			this.seller_id = seller_id;
+			this.description = description;
+		}
+		
+		public void write_to_item_stream(BufferedWriter item) throws IOException
+      	{
+      		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s\n", 
+      				item_id,
+      				currently,
+      				buy_price,
+      				first_bid,
+      				num_of_bids,
+      				location,
+      				longitude,
+      				latitude,
+      				country,
+      				started,
+      				ends,
+      				seller_id,
+      				description);
+               
+               item.write(row); 
+      	}
+	}
+	
+	public static class Category
+	{
+		Set<String> category;
+		String item_id;
+		
+		Category(Set<String> category, String item_id)
+		{
+			this.category = category;
+			this.item_id = item_id;
+		}
+		
+		public void write_to_category_stream(BufferedWriter cat) throws IOException
+      	{
+			for(String c : category)
+			{
+				String row = String.format("%s |*| %s\n", 
+      				  c,
+                      item_id);
+               
+               cat.write(row); 
+			}
+      	}
+	}
     
     static String convert_To_SQL_DateTime(String XML_DateTime)
     {
