@@ -89,14 +89,34 @@ class MyParser {
       	String user_bidder_rating;
       	
       	//constructor
-      	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
-      	{
-      		this.user_id = user_id;
-      		this.user_location = user_location;
-      		this.user_country = user_country;
-      		this.user_seller_rating = user_seller_rating;
-      		this.user_bidder_rating = user_bidder_rating;
-      	}
+    	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
+    	{
+    		this.user_id = user_id;
+    		if(user_location.isEmpty()){
+    			this.user_location = "";
+    		}
+    		else{
+    			this.user_location = user_location;
+    		}
+    		if(user_country.isEmpty()){
+    			this.user_country = "";
+    		}
+    		else{
+    			this.user_country = user_country;
+    		}
+    		if(user_seller_rating.isEmpty()){
+    			this.user_seller_rating = "";
+    		}
+    		else{
+    			this.user_seller_rating = user_seller_rating;
+    		}
+    		if(user_bidder_rating.isEmpty()){
+    			this.user_bidder_rating = "";
+    		}
+    		else{
+    			this.user_bidder_rating = user_bidder_rating;
+    		}
+    	}
       	
       	public void write_to_user_stream(BufferedWriter user) throws IOException
       	{
@@ -522,13 +542,7 @@ class MyParser {
         		}
         	}
         }
-
-
-
         //////////////////////END OF NEW////////////////////
-        
-        
-        /**************************************************************/
         
     }
     
@@ -561,6 +575,89 @@ class MyParser {
             processFile(currentFile);
         }
         
+        ///////////////////////////////////NEW//////////////////////////////////////
         //TODO: Store currentFile's contents into data files for SQL
+        
+        
+        try{
+        	FileWriter item_file = new FileWriter("Item.dat");
+        	BufferedWriter item_writer = new BufferedWriter(item_file);
+
+        	for(Map.Entry<String, Item> item : item_map.entrySet())
+        	{
+        		Item item_entry = item.getValue();
+        		item_entry.write_to_item_stream(item_writer);
+        	}
+        	item_writer.close();
+        	item_file.close();
+        }
+
+        catch(IOException e)
+        {
+        	System.out.println("Couldn't make item data file.");
+        }
+
+        try{
+        	FileWriter bid_file = new FileWriter("Bid.dat");
+        	BufferedWriter bid_writer = new BufferedWriter(bid_file);
+
+        	for(Map.Entry<String, Bid> bid : bid_map.entrySet())
+        	{
+        		Bid bid_entry = bid.getValue();
+        		bid_entry.write_to_bid_stream(bid_writer);
+        	}
+        	bid_writer.close();
+        	bid_file.close();
+        }
+
+        catch(IOException e)
+        {
+        	System.out.println("Couldn't make bid data file.");
+        }
+
+        try{
+        	FileWriter user_file = new FileWriter("User.dat");
+        	BufferedWriter user_writer = new BufferedWriter(user_file);
+
+        	for(Map.Entry<String, User> user : user_map.entrySet())
+        	{
+        		User user_entry = user.getValue();
+        		user_entry.write_to_user_stream(user_writer);
+        	}
+        	user_writer.close();
+        	user_file.close();
+        }
+
+        catch(IOException e)
+        {
+        	System.out.println("Couldn't make user data file.");
+        }
+
+        try{
+        	FileWriter category_file = new FileWriter("Category.dat");
+        	BufferedWriter category_writer = new BufferedWriter(category_file);
+
+        	for(Map.Entry<String, Set<String>> cat : category_map.entrySet())
+        	{
+        		Set<String> cat_entry = cat.getValue();
+        		for(String cat_string : cat_entry)
+        		{
+        			String data_entry = String.format("%s |*| %s\n", 
+                            cat.getKey(),
+                            cat_string);
+        			category_writer.write(data_entry); 
+        		}
+        	}
+        	category_writer.close();
+        	category_file.close();
+        }
+
+        catch(IOException e)
+        {
+        	System.out.println("Couldn't make category data file.");
+        }
+        
+        
+        ///////////////////////////////END OF NEW///////////////////////////////////
     }
 }
