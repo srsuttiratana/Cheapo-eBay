@@ -475,11 +475,34 @@ class MyParser {
         	item_map.put(item_id, new Item(item_id, currently, buy_price, first_bid, num_of_bids, 
         			location, longitude, latitude, country, started, ends, seller_id, description));
         	
-        	
-        	
         	//TODO: bids
+        	/*
+        	 	String bidder_id;
+  				String bid_time;
+  				String bid_amount;
+  				String item_id;
+        	 */
+        	
+        	Element[] bids = getElementsByTagNameNR(item, "Bids");
+        	//TODO: get all the bids
         	
         	//TODO: categories
+        	Element[] categories = getElementsByTagNameNR(item, "Category");
+        	for(Element category : categories)
+        	{
+        		String cat_name = getElementText(category);
+        		if(!category_map.containsKey(item_id))
+        		{
+        			Set<String> c_set = new HashSet<String>();
+        			c_set.add(cat_name);
+        			category_map.put(item_id, c_set);
+        		}
+        		else
+        		{
+        			category_map.get(item_id).add(cat_name);
+        		}
+        	}
+        	
         }
 
 
