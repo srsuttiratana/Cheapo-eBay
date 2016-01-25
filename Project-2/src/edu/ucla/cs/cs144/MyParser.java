@@ -175,27 +175,56 @@ class MyParser {
 		String description;
 		
 		Item(String item_id, String currently, String buy_price, String first_bid, String num_of_bids, String location,
-		String longitude,
-		String latitude,
-		String country,
-		String started,
-		String ends,
-		String seller_id,
-		String description)
+				String longitude,
+				String latitude,
+				String country,
+				String started,
+				String ends,
+				String seller_id,
+				String description)
 		{
-			this.item_id = item_id;
-			this.currently = currently;
-			this.buy_price =  buy_price;
-			this.first_bid = first_bid;
-			this.num_of_bids = num_of_bids;
-			this.location = location;
-			this.longitude = longitude;
-			this.latitude = latitude;
-			this.country = country;
-			this.started = started;
-			this.ends = ends;
-			this.seller_id = seller_id;
-			this.description = description;
+					this.item_id = item_id;
+					this.currently = currently;
+					if(buy_price.isEmpty()){
+						this.buy_price = "";
+					}
+					else{
+						this.buy_price =  buy_price;
+					}
+					this.first_bid = first_bid;
+					this.num_of_bids = num_of_bids;
+					if(location.isEmpty())
+						this.location = "";
+					else{
+						this.location = location;
+					}
+					if(longitude.isEmpty()){
+						this.longitude = "";
+					}
+					else{
+						this.longitude = longitude;
+					}
+					if(latitude.isEmpty()){
+						this.latitude = "";
+					}
+					else{
+						this.latitude = latitude;
+					}
+					if(country.isEmpty()){
+						this.country = "";
+					}
+					else{
+						this.country = country;
+					}
+					this.started = started;
+					this.ends = ends;
+					this.seller_id = seller_id;
+					if(description.length() > 4000){
+						this.description = description.substring(0, 4000);
+					}
+					else{
+						this.description = description;
+					}
 		}
 		
 		public void write_to_item_stream(BufferedWriter item) throws IOException
@@ -235,8 +264,7 @@ class MyParser {
 			for(String c : category)
 			{
 				String row = String.format("%s |*| %s\n", 
-      				  c,
-                      item_id);
+      				  c, item_id);
                
                cat.write(row); 
 			}
@@ -385,6 +413,62 @@ class MyParser {
         /* Fill in code here (you will probably need to write auxiliary
             methods). */
         
+        ///////////////////////NEW//////////////////////////
+        
+        //fetch the root of the XML Document
+        Element root_element = doc.getDocumentElement();
+
+        //start getting the "Items"
+        Element[] items = getElementsByTagNameNR(root_element, "Item");
+
+        //construct Item objects, etc.
+        for(Element item : items)
+        {
+        	/*
+        	 	String item_id;
+        		String currently;
+        		String buy_price;
+        		String first_bid;
+        		String num_of_bids;
+        		String location;
+        		String longitude;
+        		String latitude;
+        		String country;
+        		String started;
+        		String ends;
+        		String seller_id;
+        		String description;
+        	 */
+        	String item_id = item.getAttribute("ItemID");
+        	String currently = strip(getElementTextByTagNameNR(item, "Currently"));
+        	String buy_price = strip(getElementTextByTagNameNR(item, "Buy_Price"));
+        	String first_bid = strip(getElementTextByTagNameNR(item, "First_Bid"));
+        	String num_of_bids = getElementTextByTagNameNR(item, "Number_Of_Bids");
+        	String location = getElementTextByTagNameNR(item, "Location");
+        	
+        	Element e_location = getElementByTagNameNR(item, "Location");
+        	String latitude = e_location.getAttribute("Latitude");
+        	String longitude = e_location.getAttribute("Longitude");
+        	
+        	String country = getElementTextByTagNameNR(item, "Country");
+        	String started = convert_To_SQL_DateTime(getElementTextByTagNameNR(item, "Started"));
+        	String ends = convert_To_SQL_DateTime(getElementTextByTagNameNR(item, "Ends"));
+        	
+        	//add to user_map
+        	Element seller = getElementByTagNameNR(item, "Seller");
+        	String seller_id = seller.getAttribute("UserID");
+        	String seller_rating = seller.getAttribute("Rating");
+        	
+        	String description = getElementTextByTagNameNR(item, "Description");
+        	
+        	//TODO: bids
+        	
+        	//TODO: categories
+        }
+
+
+
+        //////////////////////END OF NEW////////////////////
         
         
         /**************************************************************/
@@ -419,5 +503,7 @@ class MyParser {
             File currentFile = new File(args[i]);
             processFile(currentFile);
         }
+        
+        //TODO: Store currentFile's contents into data files for SQL
     }
 }
