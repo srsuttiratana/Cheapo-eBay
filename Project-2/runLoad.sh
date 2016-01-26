@@ -11,7 +11,7 @@ mysql CS144 < load.sql
 
 rm User.dat
 rm Bid.dat
-rm Category.dat
+rm Item_Category.dat
 rm Item.dat
 
 rm -rf bin
