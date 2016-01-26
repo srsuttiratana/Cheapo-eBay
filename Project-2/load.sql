@@ -23,7 +23,7 @@ LINES TERMINATED BY "\n"
 (BidderID, @time, Amount, ItemID) SET Time = STR_TO_DATE(@time, "%Y-%m-%d %H:%i:%s")
 ;
 
-LOAD DATA LOCAL INFILE './Category.dat' INTO TABLE Category
+LOAD DATA LOCAL INFILE './Item_Category.dat' INTO TABLE Item_Category
 FIELDS TERMINATED BY ' |*| '
 LINES TERMINATED BY "\n"
 ;

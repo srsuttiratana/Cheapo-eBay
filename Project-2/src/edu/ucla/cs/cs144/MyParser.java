@@ -638,7 +638,7 @@ class MyParser {
         }
 
         try{
-        	FileWriter category_file = new FileWriter("Category.dat");
+        	FileWriter category_file = new FileWriter("Item_Category.dat");
         	BufferedWriter category_writer = new BufferedWriter(category_file);
 
         	for(Map.Entry<String, Set<String>> cat : category_map.entrySet())
