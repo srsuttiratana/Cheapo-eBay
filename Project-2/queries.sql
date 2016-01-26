@@ -11,5 +11,5 @@ SELECT COUNT(*) FROM User WHERE Seller_Rating > 1000;
 
 SELECT COUNT(DISTINCT UserID) FROM User, Item, Bid WHERE (UserID = SellerID AND SellerID = BidderID AND UserID = BidderID);
 
---7 is incorrect--
-SELECT COUNT(*) FROM Bid, Item_Category WHERE Amount > 100;
+SELECT COUNT(DISTINCT Category) FROM Item_Category
+WHERE ItemID IN (SELECT ItemID FROM Bid WHERE Amount > 100);
