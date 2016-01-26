@@ -13,3 +13,5 @@ rm User.dat
 rm Bid.dat
 rm Category.dat
 rm Item.dat
+
+rm -rf bin
