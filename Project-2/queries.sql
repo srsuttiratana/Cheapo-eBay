@@ -2,8 +2,7 @@ SELECT COUNT(*) AS 'Number of Users' FROM User;
 
 SELECT COUNT(*) AS 'Number of Items From New York' FROM Item WHERE BINARY Location = 'New York';
 
---3 is incorrect--
-SELECT COUNT(*) FROM Item_Category GROUP BY ItemID, Category HAVING COUNT(*) = 4;
+SELECT COUNT(ItemID) FROM (SELECT ItemID FROM Item_Category GROUP BY ItemID HAVING COUNT(Category) = 4)S;
 
 --Still need 4--
 
