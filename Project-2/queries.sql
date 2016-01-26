@@ -4,7 +4,7 @@ SELECT COUNT(*) AS 'Number of Items From New York' FROM Item WHERE BINARY Locati
 
 SELECT COUNT(ItemID) AS 'Number of Auctions Belonging to Exactly Four Categories' FROM (SELECT ItemID FROM Item_Category GROUP BY ItemID HAVING COUNT(Category) = 4)S;
 
-SELECT Bid.ItemID FROM Bid INNER JOIN Item ON Bid.ItemID = Item.ItemID WHERE Amount = (SELECT MAX(Amount) FROM Bid) AND Ends > '2001-12-20 00:00:01';
+SELECT Bid.ItemID AS 'ID(s) of current (unsold) auction(s) with the highest bid' FROM Bid INNER JOIN Item ON Bid.ItemID = Item.ItemID WHERE Amount = (SELECT MAX(Amount) FROM Bid) AND Ends > '2001-12-20 00:00:01';
 
 SELECT COUNT(*) AS 'Number of Sellers whose Rating is Higher than 1000' FROM User WHERE Seller_Rating > 1000;
 
