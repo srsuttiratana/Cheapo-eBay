@@ -32,8 +32,20 @@ public class Indexer {
     
     public IndexWriter getIndexWriter(boolean create) throws IOException {
         if (indexWriter == null) {
-            Directory indexDir = FSDirectory.open(new File("index-directory"));
+            Directory indexDir = FSDirectory.open(new File("/var/lib/lucene/index"));
             IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_2, new StandardAnalyzer());
+            
+            //create new IndexWriter if 'create' is true
+            if(create)
+            {
+            	config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+            }
+            
+            else	//append to existing IndexWriter if it exists, else create
+            {
+            	config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+            }
+            
             indexWriter = new IndexWriter(indexDir, config);
         }
         return indexWriter;
@@ -44,42 +56,50 @@ public class Indexer {
             indexWriter.close();
         }
    }
+    
+    public void indexItem(String itemId, String name, String desc, String categories) throws IOException {
+        IndexWriter writer = getIndexWriter(false);
+        com.sun.xml.internal.txw2.Document doc = new Document();
+        doc.add(new StringField("ItemID", String.valueOf(itemId), Field.Store.YES));
+        doc.add(new StringField("Name", name, Field.Store.YES));
+        doc.add(new StringField("Description", desc, Field.Store.NO));
+        doc.add(new StringField("Category", categories, Field.Store.NO));
+        String fullSearchableText = itemId + " " + name + " " + desc + " " + categories;
+        doc.add(new TextField("Content", fullSearchableText, Field.Store.NO));
+        writer.addDocument(doc);
+    }
  
     public void rebuildIndexes() {
 
         Connection conn = null;
-
-        getIndexWriter(true);
         // create a connection to the database to retrieve Items from MySQL
 	try {
 	    conn = DbManager.getConnection(true);
 	} catch (SQLException ex) {
 	    System.out.println(ex);
 	}
-
-
-	/*
-	 * Add your code here to retrieve Items using the connection
-	 * and add corresponding entries to your Lucene inverted indexes.
-         *
-         * You will have to use JDBC API to retrieve MySQL data from Java.
-         * Read our tutorial on JDBC if you do not know how to use JDBC.
-         *
-         * You will also have to use Lucene IndexWriter and Document
-         * classes to create an index and populate it with Items data.
-         * Read our tutorial on Lucene as well if you don't know how.
-         *
-         * As part of this development, you may want to add 
-         * new methods and create additional Java classes. 
-         * If you create new classes, make sure that
-         * the classes become part of "edu.ucla.cs.cs144" package
-         * and place your class source files at src/edu/ucla/cs/cs144/.
-	 * 
-	 */
 	
+	////////////////////////NEW//////////////////////
+	getIndexWriter(true);
+	
+	Statement s = conn.createStatement() ;
+	String sql_stmt = "SELECT Item.ItemID, Item.Name, Item.Description, Cat.Categories "
+			+ "FROM (SELECT ItemID, GROUP_CONCAT(Item_Category.Category SEPARATOR ' ') AS Categories "
+			+ "FROM Item_Category GROUP BY ItemID) AS Cat "
+			+ "INNER JOIN Item " 
+			+ "ON Item.ItemID = Cat.ItemID"
+			;
+	ResultSet fetched_items = s.executeQuery(sql_stmt);
+	
+	while(fetched_items.next())
+	{
+		indexItem(fetched_items.getInt("ItemID"), fetched_items.getString("Name"), fetched_items.getString("Description"), fetched_items.getString("Categories"));
+	}
 
 	closeIndexWriter();
-
+	
+	////////////////////////END OF NEW//////////////////////
+	
         // close the database connection
 	try {
 	    conn.close();
