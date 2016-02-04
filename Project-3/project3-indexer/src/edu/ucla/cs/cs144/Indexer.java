@@ -57,9 +57,9 @@ public class Indexer {
         }
    }
     
-    public void indexItem(String itemId, String name, String desc, String categories) throws IOException {
+    public void indexItem(int itemId, String name, String desc, String categories) throws IOException {
         IndexWriter writer = getIndexWriter(false);
-        com.sun.xml.internal.txw2.Document doc = new Document();
+        Document doc = new Document();
         doc.add(new StringField("ItemID", String.valueOf(itemId), Field.Store.YES));
         doc.add(new StringField("Name", name, Field.Store.YES));
         doc.add(new StringField("Description", desc, Field.Store.NO));
@@ -79,31 +79,25 @@ public class Indexer {
 	    System.out.println(ex);
 	}
 	
-	////////////////////////NEW//////////////////////
-	getIndexWriter(true);
-	
-	Statement s = conn.createStatement() ;
-	String sql_stmt = "SELECT Item.ItemID, Item.Name, Item.Description, Cat.Categories "
+	try {
+		getIndexWriter(true);
+		Statement s = conn.createStatement() ;
+		String sql_stmt = "SELECT Item.ItemID, Item.Name, Item.Description, Cat.Categories "
 			+ "FROM (SELECT ItemID, GROUP_CONCAT(Item_Category.Category SEPARATOR ' ') AS Categories "
 			+ "FROM Item_Category GROUP BY ItemID) AS Cat "
 			+ "INNER JOIN Item " 
 			+ "ON Item.ItemID = Cat.ItemID"
 			;
-	ResultSet fetched_items = s.executeQuery(sql_stmt);
 	
-	while(fetched_items.next())
-	{
-		indexItem(fetched_items.getInt("ItemID"), fetched_items.getString("Name"), fetched_items.getString("Description"), fetched_items.getString("Categories"));
-	}
-
-	closeIndexWriter();
+		ResultSet fetched_items = s.executeQuery(sql_stmt);
 	
-	////////////////////////END OF NEW//////////////////////
-	
-        // close the database connection
-	try {
+		while(fetched_items.next())
+		{
+			indexItem(fetched_items.getInt("ItemID"), fetched_items.getString("Name"), fetched_items.getString("Description"), fetched_items.getString("Categories"));
+		}
+		closeIndexWriter();
 	    conn.close();
-	} catch (SQLException ex) {
+	} catch (Exception ex) {
 	    System.out.println(ex);
 	}
     }    
