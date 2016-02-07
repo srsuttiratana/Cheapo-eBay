@@ -34,25 +34,42 @@ import edu.ucla.cs.cs144.SearchRegion;
 import edu.ucla.cs.cs144.SearchResult;
 
 public class AuctionSearch implements IAuctionSearch {
-
-	/* 
-         * You will probably have to use JDBC to access MySQL data
-         * Lucene IndexSearcher class to lookup Lucene index.
-         * Read the corresponding tutorial to learn about how to use these.
-         *
-	 * You may create helper functions or classes to simplify writing these
-	 * methods. Make sure that your helper functions are not public,
-         * so that they are not exposed to outside of this class.
-         *
-         * Any new classes that you create should be part of
-         * edu.ucla.cs.cs144 package and their source files should be
-         * placed at src/edu/ucla/cs/cs144.
-         *
-         */
+	
+	private IndexSearcher searcher = null;
+    private QueryParser parser = null;
 	
 	public SearchResult[] basicSearch(String query, int numResultsToSkip, 
 			int numResultsToReturn) {
-		// TODO: Your code here!
+		
+		try
+		{
+			searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(new File("/var/lib/lucene/index"))));;
+			parser = new QueryParser("Content", new StandardAnalyzer());
+			
+			int numResultsTotal = numResultsToSkip + numResultsToReturn;
+			
+			Query q = parser.parse(query);
+			//get the top search hits
+	        TopDocs hits = searcher.search(q, numResultsTotal);
+	        ScoreDoc[] top_results = hits.scoreDocs;
+	        int num_TotalHits = hits.totalHits;
+	        SearchResult[] result_list = new SearchResult[top_results.length - numResultsToSkip];
+	        
+	        for (int i = numResultsToSkip; i < top_results.length; i++)
+	        {
+	        	Document doc = searcher.doc(top_results[i].doc);
+	        	SearchResult temp = new SearchResult(doc.get("ItemID"), doc.get("Name"));
+	        	result_list[i-numResultsToSkip] = temp;
+	        }
+	        
+	        return result_list;
+	        
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
+		
 		return new SearchResult[0];
 	}
 
