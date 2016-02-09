@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import org.apache.lucene.document.Document;
@@ -38,6 +39,8 @@ public class AuctionSearch implements IAuctionSearch {
 	private IndexSearcher searcher = null;
     private QueryParser parser = null;
 	
+	private int totalHits = 0;
+	
 	public SearchResult[] basicSearch(String query, int numResultsToSkip, 
 			int numResultsToReturn) {
 		
@@ -53,6 +56,7 @@ public class AuctionSearch implements IAuctionSearch {
 	        TopDocs hits = searcher.search(q, numResultsTotal);
 	        ScoreDoc[] top_results = hits.scoreDocs;
 	        int num_TotalHits = hits.totalHits;
+			totalHits = hits.totalHits;
 	        SearchResult[] result_list = new SearchResult[top_results.length - numResultsToSkip];
 	        
 	        for (int i = numResultsToSkip; i < top_results.length; i++)
@@ -63,8 +67,8 @@ public class AuctionSearch implements IAuctionSearch {
 	        }
 	        
 	        return result_list;
-	        
 		}
+	
 		catch (Exception e)
 		{
 			System.out.println(e);
@@ -75,8 +79,50 @@ public class AuctionSearch implements IAuctionSearch {
 
 	public SearchResult[] spatialSearch(String query, SearchRegion region,
 			int numResultsToSkip, int numResultsToReturn) {
-		// TODO: Your code here!
-		return new SearchResult[0];
+		Connection conn = null;
+    	PreparedStatement stmt = null;
+    	ResultSet items_results;
+    	Double Latitude; 
+		Double Longitude;
+    	int tmpLength;
+		String tmp;
+    	String[] tmp2;
+		
+		try {
+			conn = DbManager.getConnection(true);
+			
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		
+		SearchResult[] basic_search_results = basicSearch(query,numResultsToSkip,numResultsToReturn);
+    	basic_search_results = basicSearch(query,numResultsToSkip,totalHits);
+    	ArrayList<SearchResult> final_results = new ArrayList<SearchResult>();
+    	for(SearchResult res : basic_search_results) {
+    		try {
+				stmt = conn.prepareStatement("SELECT ItemID,astext(Location) FROM ItemLocation WHERE ItemID = " + res.getItemId());
+				items_results = stmt.executeQuery();
+				if(items_results.next()) {
+					tmp = items_results.getString("astext(Location)");
+					tmpLength = tmp.length();
+					tmp = tmp.substring(6,tmpLength-1);
+					tmp2 = tmp.split(" ");
+					Latitude = Double.parseDouble(tmp2[0]);
+					Longitude = Double.parseDouble(tmp2[1]);
+					if(Latitude <= region.getRx() && Longitude <= region.getRy()
+							&& Latitude >= region.getLx() && Longitude >= region.getLy())
+						final_results.add(res);
+					}
+    			} catch (SQLException e) {
+					e.printStackTrace();
+    			}
+    		}
+    		try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+        return final_results.toArray(new SearchResult[final_results.size()]);
 	}
 
 	public String getXMLDataForItemId(String itemId) {
