@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.Analyzer;
@@ -145,17 +146,108 @@ public class AuctionSearch implements IAuctionSearch {
 			conn = DbManager.getConnection(true);
 			Statement stmt = conn.createStatement();
 			
-			ResultSet results = stmt.executeQuery("SELECT * FROM Item WHERE ItemId = " + itemId);
+			ResultSet results = stmt.executeQuery("SELECT * FROM Item WHERE ItemID = " + itemId);
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
 			org.w3c.dom.Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("Item");
 			doc.appendChild(rootElement);
-			rootElement.setAttribute("ItemId", itemId);
+			rootElement.setAttribute("ItemID", itemId);
 			
-			
-			
+			if (results.first())
+			{
+				//append name
+				String itemName = results.getString("Name");
+				Element name = doc.createElement("Name");
+				name.appendChild(doc.createTextNode(itemName));
+				rootElement.appendChild(name);
+				
+				String currently = results.getString("Currently");
+				String buyPrice = results.getString("Buy_Price");
+				String firstBid = results.getString("First_Bid");
+				String numberOfBids = results.getString("Number_of_Bids");
+				String country = results.getString("Country");
+				String started = results.getString("Started");
+				started = formatDate(started);
+				String ends = results.getString("Ends");
+				ends = formatDate(ends);
+				String description = results.getString("Description");
+				
+				//get latitude and longitude
+				String latitude = results.getString("Latitude");
+				String longitude = results.getString("Longitude");
+				
+				//get seller's rating and userID
+				String userId = results.getString("UserID");
+				results = stmt.executeQuery("SELECT * FROM User WHERE UserID = " + userId);
+				String rating;
+				if (results.first())
+				{
+					rating = results.getString("Seller_Rating");
+				}
+				
+				//get categories
+				results = stmt.executeQuery("SELECT * FROM Item_Category WHERE ItemID = " + itemId);
+				ArrayList<String> categoryList = new ArrayList<String>();
+				while (results.first())
+				{
+					categoryList.add(results.getString("Category"));
+				}
+				
+				//append categories
+				for (String category : categoryList)
+				{
+					Element categoryName = doc.createElement("Category");
+					categoryName.appendChild(doc.createTextNode(category));
+					rootElement.appendChild(categoryName);
+				}
+				
+				//append currently
+				Element currentlyElem = doc.createElement("Currently");
+				currentlyElem.appendChild(doc.createTextNode(currently));
+				rootElement.appendChild(currentlyElem);
+				
+				//append buy price
+				Element buyPriceElem = doc.createElement("Buy_Price");
+				buyPriceElem.appendChild(doc.createTextNode(buyPrice));
+				rootElement.appendChild(buyPriceElem);
+				
+				//append first bid
+				Element firstBidElem = doc.createElement("First_Bid");
+				firstBidElem.appendChild(doc.createTextNode(firstBid));
+				rootElement.appendChild(firstBidElem);
+				
+				//append num of bids
+				Element numOfBidsElem = doc.createElement("Number_of_Bids");
+				numOfBidsElem.appendChild(doc.createTextNode(numberOfBids));
+				rootElement.appendChild(numOfBidsElem);
+				
+				//get number of bids
+				results = stmt.executeQuery("SELECT COUNT(*) FROM Bid WHERE ItemID = " + itemId);
+				String numOfBids;
+				if (results.first())
+				{
+					numOfBids = results.getString("COUNT(*)");
+				}
+				
+				//get bids
+				results = stmt.executeQuery("SELECT * FROM Bid WHERE ItemID = " + itemId);
+				Element bidsElem = doc.createElement("Bids");
+				rootElement.appendChild(bidsElem);
+				while (results.next())
+				{
+					Element bidElem = doc.createElement("Bid");
+					Element bidderElem = doc.createElement("Bidder");
+					
+					String bidder = results.getString("BidderID");
+					
+					bidderElem.setAttribute(Bidder, value);
+					bidElem.appendChild(bidderElem);
+					bidsElem.appendChild(bidElem);
+				}
+				
+			}
 		} catch (SQLException ex) {
 			System.out.println(ex);
 		}
@@ -169,6 +261,20 @@ public class AuctionSearch implements IAuctionSearch {
 	
 	public String echo(String message) {
 		return message;
+	}
+	
+	public String formatDate(String date)
+	{
+		String formattedDate = "";
+		try{
+			SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		    Date parsedDate = dateFormat.parse(date);
+		    formattedDate = newDateFormat.format(parsedDate);
+		}catch(Exception e){//this generic but you can control another types of exception
+		  System.out.println(e);
+		}
+		return formattedDate;
 	}
 
 }
