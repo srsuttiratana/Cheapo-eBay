@@ -159,14 +159,8 @@ public class AuctionSearch implements IAuctionSearch {
 			doc.appendChild(rootElement);
 			rootElement.setAttribute("ItemID", itemId);
 			
-			//TEST
-			System.out.println(itemId);
-			
 			if (results.first())
-			{
-				//TEST
-				System.out.println("inside 1st if statement");
-				
+			{	
 				//append name
 				String itemName = results.getString("Name");
 				Element name = doc.createElement("Name");
@@ -207,9 +201,6 @@ public class AuctionSearch implements IAuctionSearch {
 				if (results.first())
 				{
 					rating = results.getString("Seller_Rating");
-					
-					//TEST
-					System.out.println("Seller rating is: " + rating);
 				}
 				
 				//get categories
@@ -218,9 +209,6 @@ public class AuctionSearch implements IAuctionSearch {
 				while (results.next())
 				{
 					categoryList.add(results.getString("Category"));
-					
-					//TEST
-					System.out.println("Category is: " + results.getString("Category"));
 				}
 				
 				//append categories
@@ -260,9 +248,6 @@ public class AuctionSearch implements IAuctionSearch {
 				if (results.first())
 				{
 					numOfBids = results.getString("COUNT(*)");
-					
-					//TEST
-					System.out.println("Number of Bids: " + numOfBids);
 				}
 				
 				//get bids
@@ -279,10 +264,7 @@ public class AuctionSearch implements IAuctionSearch {
 				String bidAmount;
 				
 				while (results.next())
-				{
-					//TEST
-					System.out.println("Inside bidder while loop");
-					
+				{	
 					Element bidElem = doc.createElement("Bid");
 					Element bidderElem = doc.createElement("Bidder");
 					
@@ -292,7 +274,6 @@ public class AuctionSearch implements IAuctionSearch {
 					
 					ResultSet bidQuery = stmt1.executeQuery("SELECT * FROM User WHERE UserID = '" + bidderId + "'");
 					
-					//NEW
 					if (bidQuery.first())
 					{
 						bidderRating = bidQuery.getString("Bidder_Rating");
@@ -333,54 +314,8 @@ public class AuctionSearch implements IAuctionSearch {
 					
 					//append bid to bids
 					bidsElem.appendChild(bidElem);
-					
-					/*
-					bidderRating = bidQuery.getString("Bidder_Rating");
-					bidderLocation = bidQuery.getString("Location");
-					bidderCountry = bidQuery.getString("Country");
-					
-					bidderElem.setAttribute("UserID", bidderId);
-					bidderElem.setAttribute("Rating", bidderRating);
-					
-					if (bidderLocation != "");
-					{
-						Element locElem = doc.createElement("Location");
-						locElem.appendChild(doc.createTextNode(bidderLocation));
-						bidderElem.appendChild(locElem);
-					}
-					
-					if (bidderCountry != "")
-					{
-						Element countryElem = doc.createElement("Country");
-						countryElem.appendChild(doc.createTextNode(bidderCountry));
-						bidderElem.appendChild(countryElem);
-					}
-					
-					bidElem.appendChild(bidderElem);
-					
-					//get bid times and amounts and append them
-					bidTime = results.getString("Time");
-					bidTime = formatDate(bidTime);
-					Element timeElem = doc.createElement("Time");
-					timeElem.appendChild(doc.createTextNode(bidTime));
-					bidElem.appendChild(timeElem);
-					
-					Element amountElem = doc.createElement("Amount");
-					bidAmount = results.getString("Amount");
-					amountElem.appendChild(doc.createTextNode(bidAmount));
-					bidElem.appendChild(amountElem);
-					
-					//append bid to bids
-					bidsElem.appendChild(bidElem);
-					
-					//TEST
-					System.out.println("Bottom of bidder loop");
-					*/
 				}
-				
-				//TEST
-				System.out.println("Reached end of bidder loop");
-				
+
 				//append location, longitude, and latitude of item
 				if (location != null)
 				{
