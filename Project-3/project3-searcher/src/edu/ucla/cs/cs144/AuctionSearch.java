@@ -39,6 +39,7 @@ import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -47,6 +48,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import java.io.StringWriter;
 
 public class AuctionSearch implements IAuctionSearch {
 	
@@ -141,6 +144,7 @@ public class AuctionSearch implements IAuctionSearch {
 
 	public String getXMLDataForItemId(String itemId) {
 		Connection conn = null;
+		String xmlDoc = "";
 		
 		try {
 			conn = DbManager.getConnection(true);
@@ -155,8 +159,14 @@ public class AuctionSearch implements IAuctionSearch {
 			doc.appendChild(rootElement);
 			rootElement.setAttribute("ItemID", itemId);
 			
+			//TEST
+			System.out.println(itemId);
+			
 			if (results.first())
 			{
+				//TEST
+				System.out.println("inside 1st if statement");
+				
 				//append name
 				String itemName = results.getString("Name");
 				Element name = doc.createElement("Name");
@@ -167,6 +177,10 @@ public class AuctionSearch implements IAuctionSearch {
 				String buyPrice = results.getString("Buy_Price");
 				String firstBid = results.getString("First_Bid");
 				String numberOfBids = results.getString("Number_of_Bids");
+				if (numberOfBids == null)
+				{
+					numberOfBids = "0";
+				}
 				String country = results.getString("Country");
 				String started = results.getString("Started");
 				started = formatDate(started);
@@ -174,25 +188,39 @@ public class AuctionSearch implements IAuctionSearch {
 				ends = formatDate(ends);
 				String description = results.getString("Description");
 				
+				//get location
+				String location = results.getString("Location");
+				
+				if (location == null)
+				{
+					location = "";
+				}
+				
 				//get latitude and longitude
 				String latitude = results.getString("Latitude");
 				String longitude = results.getString("Longitude");
 				
 				//get seller's rating and userID
-				String userId = results.getString("UserID");
-				results = stmt.executeQuery("SELECT * FROM User WHERE UserID = " + userId);
-				String rating;
+				String userId = results.getString("SellerID");
+				results = stmt.executeQuery("SELECT * FROM User WHERE UserID = '" + userId + "'");
+				String rating = "";
 				if (results.first())
 				{
 					rating = results.getString("Seller_Rating");
+					
+					//TEST
+					System.out.println("Seller rating is: " + rating);
 				}
 				
 				//get categories
 				results = stmt.executeQuery("SELECT * FROM Item_Category WHERE ItemID = " + itemId);
 				ArrayList<String> categoryList = new ArrayList<String>();
-				while (results.first())
+				while (results.next())
 				{
 					categoryList.add(results.getString("Category"));
+					
+					//TEST
+					System.out.println("Category is: " + results.getString("Category"));
 				}
 				
 				//append categories
@@ -209,9 +237,12 @@ public class AuctionSearch implements IAuctionSearch {
 				rootElement.appendChild(currentlyElem);
 				
 				//append buy price
-				Element buyPriceElem = doc.createElement("Buy_Price");
-				buyPriceElem.appendChild(doc.createTextNode(buyPrice));
-				rootElement.appendChild(buyPriceElem);
+				if (buyPrice != null)
+				{
+					Element buyPriceElem = doc.createElement("Buy_Price");
+					buyPriceElem.appendChild(doc.createTextNode(buyPrice));
+					rootElement.appendChild(buyPriceElem);
+				}
 				
 				//append first bid
 				Element firstBidElem = doc.createElement("First_Bid");
@@ -229,31 +260,210 @@ public class AuctionSearch implements IAuctionSearch {
 				if (results.first())
 				{
 					numOfBids = results.getString("COUNT(*)");
+					
+					//TEST
+					System.out.println("Number of Bids: " + numOfBids);
 				}
 				
 				//get bids
 				results = stmt.executeQuery("SELECT * FROM Bid WHERE ItemID = " + itemId);
 				Element bidsElem = doc.createElement("Bids");
 				rootElement.appendChild(bidsElem);
+				
+				
+				String bidderLocation;
+				String bidderCountry;
+				String bidderRating;
+				String bidTime;
+				String bidderId;
+				String bidAmount;
+				
 				while (results.next())
 				{
+					//TEST
+					System.out.println("Inside bidder while loop");
+					
 					Element bidElem = doc.createElement("Bid");
 					Element bidderElem = doc.createElement("Bidder");
 					
-					String bidder = results.getString("BidderID");
+					bidderId = results.getString("BidderID");
 					
-					bidderElem.setAttribute(Bidder, value);
-					bidElem.appendChild(bidderElem);
+					Statement stmt1 = conn.createStatement();
+					
+					ResultSet bidQuery = stmt1.executeQuery("SELECT * FROM User WHERE UserID = '" + bidderId + "'");
+					
+					//NEW
+					if (bidQuery.first())
+					{
+						bidderRating = bidQuery.getString("Bidder_Rating");
+						bidderLocation = bidQuery.getString("Location");
+						bidderCountry = bidQuery.getString("Country");
+						
+						bidderElem.setAttribute("UserID", bidderId);
+						bidderElem.setAttribute("Rating", bidderRating);
+						
+						if (bidderLocation != "");
+						{
+							Element locElem = doc.createElement("Location");
+							locElem.appendChild(doc.createTextNode(bidderLocation));
+							bidderElem.appendChild(locElem);
+						}
+						
+						if (bidderCountry != "")
+						{
+							Element countryElem = doc.createElement("Country");
+							countryElem.appendChild(doc.createTextNode(bidderCountry));
+							bidderElem.appendChild(countryElem);
+						}
+						
+						bidElem.appendChild(bidderElem);
+					}
+					
+					//get bid times and amounts and append them
+					bidTime = results.getString("Time");
+					bidTime = formatDate(bidTime);
+					Element timeElem = doc.createElement("Time");
+					timeElem.appendChild(doc.createTextNode(bidTime));
+					bidElem.appendChild(timeElem);
+					
+					Element amountElem = doc.createElement("Amount");
+					bidAmount = results.getString("Amount");
+					amountElem.appendChild(doc.createTextNode(bidAmount));
+					bidElem.appendChild(amountElem);
+					
+					//append bid to bids
 					bidsElem.appendChild(bidElem);
+					
+					/*
+					bidderRating = bidQuery.getString("Bidder_Rating");
+					bidderLocation = bidQuery.getString("Location");
+					bidderCountry = bidQuery.getString("Country");
+					
+					bidderElem.setAttribute("UserID", bidderId);
+					bidderElem.setAttribute("Rating", bidderRating);
+					
+					if (bidderLocation != "");
+					{
+						Element locElem = doc.createElement("Location");
+						locElem.appendChild(doc.createTextNode(bidderLocation));
+						bidderElem.appendChild(locElem);
+					}
+					
+					if (bidderCountry != "")
+					{
+						Element countryElem = doc.createElement("Country");
+						countryElem.appendChild(doc.createTextNode(bidderCountry));
+						bidderElem.appendChild(countryElem);
+					}
+					
+					bidElem.appendChild(bidderElem);
+					
+					//get bid times and amounts and append them
+					bidTime = results.getString("Time");
+					bidTime = formatDate(bidTime);
+					Element timeElem = doc.createElement("Time");
+					timeElem.appendChild(doc.createTextNode(bidTime));
+					bidElem.appendChild(timeElem);
+					
+					Element amountElem = doc.createElement("Amount");
+					bidAmount = results.getString("Amount");
+					amountElem.appendChild(doc.createTextNode(bidAmount));
+					bidElem.appendChild(amountElem);
+					
+					//append bid to bids
+					bidsElem.appendChild(bidElem);
+					
+					//TEST
+					System.out.println("Bottom of bidder loop");
+					*/
 				}
 				
+				//TEST
+				System.out.println("Reached end of bidder loop");
+				
+				//append location, longitude, and latitude of item
+				if (location != null)
+				{
+					Element locElem = doc.createElement("Location");
+					if (latitude != null && longitude != null)
+					{
+						locElem.setAttribute("Latitude", latitude);
+						locElem.setAttribute("Longitude", longitude);
+					}
+					locElem.appendChild(doc.createTextNode(location));
+					rootElement.appendChild(locElem);
+				}
+				
+				//append country
+				if (country != null)
+				{
+					Element countryElem = doc.createElement("Country");
+					countryElem.appendChild(doc.createTextNode(country));
+					rootElement.appendChild(countryElem);
+				}
+				
+				//append started
+				Element startedElem = doc.createElement("Started");
+				startedElem.appendChild(doc.createTextNode(started));
+				rootElement.appendChild(startedElem);
+				
+				//append ends
+				Element endsElem = doc.createElement("Ends");
+				endsElem.appendChild(doc.createTextNode(ends));
+				rootElement.appendChild(endsElem);
+				
+				//append seller
+				Element sellerElem = doc.createElement("Seller");
+				sellerElem.setAttribute("Rating", rating);
+				sellerElem.setAttribute("UserID", userId);
+				rootElement.appendChild(sellerElem);
+				
+				//append description
+				Element descriptionElem = doc.createElement("Description");
+				descriptionElem.appendChild(doc.createTextNode(description));
+				rootElement.appendChild(descriptionElem);
+				
+				TransformerFactory tf = TransformerFactory.newInstance();
+				Transformer transformer = tf.newTransformer();
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+				
+				StringWriter writer = new StringWriter();
+				
+				DOMSource source = new DOMSource(doc);
+				
+				StreamResult streamResult = new StreamResult(writer);
+				
+				transformer.transform(source, streamResult);
+				
+				xmlDoc = writer.getBuffer().toString().replaceAll("\n|\r", "");
+				xmlDoc = xmlDoc.replaceAll("&amp;", "&");
+				xmlDoc = xmlDoc.replaceAll("&quot;", "\"");
+				xmlDoc = xmlDoc.replaceAll("&apos;", "'");
+				xmlDoc = xmlDoc.replaceAll("&lt;", "<");
+				xmlDoc = xmlDoc.replaceAll("&gt;", ">");
 			}
+			
+			return xmlDoc;
 		} catch (SQLException ex) {
 			System.out.println(ex);
 		}
 		
 		catch (ParserConfigurationException ex) {
 			System.out.println(ex);
+		}
+		
+		catch (TransformerException ex)
+		{
+			System.out.println(ex);
+		}
+		
+		catch (NullPointerException ex)
+		{
+			System.out.println("Null Pointer Exception!");
+			ex.printStackTrace();
 		}
 		
 		return "";
