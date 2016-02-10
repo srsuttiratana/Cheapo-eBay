@@ -34,6 +34,19 @@ import edu.ucla.cs.cs144.DbManager;
 import edu.ucla.cs.cs144.SearchRegion;
 import edu.ucla.cs.cs144.SearchResult;
 
+import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+
 public class AuctionSearch implements IAuctionSearch {
 	
 	private IndexSearcher searcher = null;
@@ -126,7 +139,31 @@ public class AuctionSearch implements IAuctionSearch {
 	}
 
 	public String getXMLDataForItemId(String itemId) {
-		// TODO: Your code here!
+		Connection conn = null;
+		
+		try {
+			conn = DbManager.getConnection(true);
+			Statement stmt = conn.createStatement();
+			
+			ResultSet results = stmt.executeQuery("SELECT * FROM Item WHERE ItemId = " + itemId);
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			org.w3c.dom.Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("Item");
+			doc.appendChild(rootElement);
+			rootElement.setAttribute("ItemId", itemId);
+			
+			
+			
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		
+		catch (ParserConfigurationException ex) {
+			System.out.println(ex);
+		}
+		
 		return "";
 	}
 	
