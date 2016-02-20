@@ -1,3 +1,5 @@
+<%@ page import="edu.ucla.cs.cs144.SearchResult" %>
+
 <!DOCTYPE html>
 <html>
 <head>
