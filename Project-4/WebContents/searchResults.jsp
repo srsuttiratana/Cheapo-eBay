@@ -32,7 +32,7 @@
 	SearchResult[] results = (SearchResult[])request.getAttribute("results");
 %>
 <div>
-	<h1>Search Results</h1>
+	<h1>Search Results for '<%= (String)request.getAttribute("q")%>'</h1>
 	<ul>
 		<% for (SearchResult item: results) { %>
 			<a href="/eBay/item?id=<%=item.getItemId()%>"><li>ID:<%= item.getItemId() %> Item Name:<%= item.getName()%></li></a>	
