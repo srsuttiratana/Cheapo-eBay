@@ -7,6 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.text.SimpleDateFormat;
+
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -28,18 +34,6 @@ import edu.ucla.cs.cs144.AuctionSearchClient;
 public class ItemServlet extends HttpServlet implements Servlet {
        
     public ItemServlet() {}
-    
-  //store the User ID as the key and User
-  	static Map<String, User> user_map = new HashMap<String, User>();
-  	
-  	//store the bids using a key string of bidder_id + time + item_id
-  	static Map<String, Bid> bid_map = new HashMap<String, Bid>();
-  	
-  	//store the items with item_id as the key string
-  	static Map<String, Item> item_map = new HashMap<String, Item>();
-    
-  //store the Item ID as the key and a distinct Set of Categories
-    static Map<String, Set<String>> category_map = new HashMap<String, Set<String>>();
 
   //store the bid keys so that we know whether there are duplicate bids
   	//optional
@@ -83,18 +77,6 @@ public class ItemServlet extends HttpServlet implements Servlet {
   			this.user_bidder_rating = user_bidder_rating;
   		}
   	}
-    	
-    	public void write_to_user_stream(BufferedWriter user) throws IOException
-    	{
-    		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s\n", 
-    				user_id,
-                    user_location,
-                    user_country,
-                    user_seller_rating,
-                    user_bidder_rating);
-             
-             user.write(row); 
-    	}
     }
 	
 	public static class Bid
@@ -103,25 +85,18 @@ public class ItemServlet extends HttpServlet implements Servlet {
 		public String bid_time;
 		public String bid_amount;
 		public String item_id;
+		public String bidder_location;
+		public String bidder_country;
 		
-		Bid(String bidder_id, String bid_time, String bid_amount, String item_id)
+		Bid(String bidder_id, String bid_time, String bid_amount, String item_id, String bidder_location, String bidder_country)
 		{
 			this.bidder_id = bidder_id;
 			this.bid_time = bid_time;
 			this.bid_amount = bid_amount;
 			this.item_id = item_id;
+			this.bidder_location = bidder_location;
+			this.bidder_country = bidder_country;
 		}
-		
-		public void write_to_bid_stream(BufferedWriter bid) throws IOException
-    	{
-    		String row = String.format("%s |*| %s |*| %s |*| %s\n", 
-    				  bidder_id,
-                    bid_time,
-                    bid_amount,
-                    item_id);
-             
-             bid.write(row); 
-    	}
 	}
 	
 	public static class Item
@@ -194,27 +169,6 @@ public class ItemServlet extends HttpServlet implements Servlet {
 						this.description = description;
 					}
 		}
-		
-		public void write_to_item_stream(BufferedWriter item) throws IOException
-    	{
-    		String row = String.format("%s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s |*| %s\n", 
-    				item_id,
-    				name,
-    				currently,
-    				buy_price,
-    				first_bid,
-    				num_of_bids,
-    				location,
-    				longitude,
-    				latitude,
-    				country,
-    				started,
-    				ends,
-    				seller_id,
-    				description);
-             
-             item.write(row); 
-    	}
 	}
 	
 	public static class Category
@@ -227,17 +181,6 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			this.category = category;
 			this.item_id = item_id;
 		}
-		
-		public void write_to_category_stream(BufferedWriter cat) throws IOException
-    	{
-			for(String c : category)
-			{
-				String row = String.format("%s |*| %s\n", 
-    				  c, item_id);
-             
-             cat.write(row); 
-			}
-    	}
 	}
   
   static String convert_To_SQL_DateTime(String XML_DateTime)
@@ -393,7 +336,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
         
         /* At this point 'doc' contains a DOM representation of an 'Items' XML
          * file. Use doc.getDocumentElement() to get the root Element. */
-        System.out.println("Successfully parsed");
+        //System.out.println("Successfully parsed");
         
         /* Fill in code here (you will probably need to write auxiliary
             methods). */
@@ -406,73 +349,32 @@ public class ItemServlet extends HttpServlet implements Servlet {
         //start getting the "Items"
         Element[] items = getElementsByTagNameNR(root_element, "Item");
 
-        //construct Item objects, etc.
-        for(Element item : items)
-        {
-        	/*
-        	 	String item_id;
-        		String currently;
-        		String buy_price;
-        		String first_bid;
-        		String num_of_bids;
-        		String location;
-        		String longitude;
-        		String latitude;
-        		String country;
-        		String started;
-        		String ends;
-        		String seller_id;
-        		String description;
-        	 */
-        	String item_id = item.getAttribute("ItemID");
-        	String name = getElementTextByTagNameNR(item, "Name");
-        	String currently = strip(getElementTextByTagNameNR(item, "Currently"));
-        	String buy_price = strip(getElementTextByTagNameNR(item, "Buy_Price"));
-        	String first_bid = strip(getElementTextByTagNameNR(item, "First_Bid"));
-        	String num_of_bids = getElementTextByTagNameNR(item, "Number_Of_Bids");
-        	String location = getElementTextByTagNameNR(item, "Location");
+        	String item_id = items[0].getAttribute("ItemID");
+        	String name = getElementTextByTagNameNR(items[0], "Name");
+        	String currently = strip(getElementTextByTagNameNR(items[0], "Currently"));
+        	String buy_price = strip(getElementTextByTagNameNR(items[0], "Buy_Price"));
+        	String first_bid = strip(getElementTextByTagNameNR(items[0], "First_Bid"));
+        	String num_of_bids = getElementTextByTagNameNR(items[0], "Number_Of_Bids");
+        	String location = getElementTextByTagNameNR(items[0], "Location");
         	
-        	Element e_location = getElementByTagNameNR(item, "Location");
+        	Element e_location = getElementByTagNameNR(items[0], "Location");
         	String latitude = e_location.getAttribute("Latitude");
         	String longitude = e_location.getAttribute("Longitude");
         	
-        	String country = getElementTextByTagNameNR(item, "Country");
-        	String started = convert_To_SQL_DateTime(getElementTextByTagNameNR(item, "Started"));
-        	String ends = convert_To_SQL_DateTime(getElementTextByTagNameNR(item, "Ends"));
+        	String country = getElementTextByTagNameNR(items[0], "Country");
+        	String started = convert_To_SQL_DateTime(getElementTextByTagNameNR(items[0], "Started"));
+        	String ends = convert_To_SQL_DateTime(getElementTextByTagNameNR(items[0], "Ends"));
         	
         	//add to user_map
-        	Element seller = getElementByTagNameNR(item, "Seller");
+        	Element seller = getElementByTagNameNR(items[0], "Seller");
         	String seller_id = seller.getAttribute("UserID");
         	String seller_rating = seller.getAttribute("Rating");
         	
-        	User u = user_map.get(seller_id);
-        	if(u != null)	//seller already exists in user_map
-        	{
-        		u.user_seller_rating = seller_rating;
-        		user_map.put(seller_id, u);
-        	}
-        	else
-        	{	//User Constructor:
-        		//User(String user_id, String user_location, String user_country, 
-        		//String user_seller_rating, String user_bidder_rating)
-        		user_map.put(seller_id, new User(seller_id, "", "", seller_rating, ""));
-        	}
+        	String description = getElementTextByTagNameNR(items[0], "Description");
         	
-        	String description = getElementTextByTagNameNR(item, "Description");
-        	
-        	item_map.put(item_id, new Item(item_id, name, currently, buy_price, first_bid, num_of_bids, 
-        			location, longitude, latitude, country, started, ends, seller_id, description));
-        	
-        	//TODO: bids
-        	/*
-        	 	String bidder_id;
-        		String bid_time;
-        		String bid_amount;
-        		String item_id;
-        	 */
-        	
-        	Element bids_parent = getElementByTagNameNR(item, "Bids");
+        	Element bids_parent = getElementByTagNameNR(items[0], "Bids");
         	Element[] bids = getElementsByTagNameNR(bids_parent, "Bid");
+        	ArrayList<Bid> bidList = new ArrayList();
         	//TODO: get all the bids
         	for(Element bid : bids)
         	{
@@ -485,48 +387,34 @@ public class ItemServlet extends HttpServlet implements Servlet {
         		String bid_time = convert_To_SQL_DateTime(getElementTextByTagNameNR(bid, "Time"));
         		String bid_amount = strip(getElementTextByTagNameNR(bid, "Amount"));
         		
-        		//add to bid_map
-        		String bid_key = bidder_id + bid_time + item_id;
-        		if(!bid_map.containsKey(bid_key))
-        		{
-        			bid_map.put(bid_key, new Bid(bidder_id, bid_time, bid_amount, item_id));
-        		}
-        		
-        		//add to user_map
-        		if(!user_map.containsKey(bidder_id))
-        		{
-        			//User(String user_id, String user_location, String user_country, 
-        			//String user_seller_rating, String user_bidder_rating)
-        			user_map.put(bidder_id, new User(bidder_id, bidder_loc, bidder_country, "", bidder_rating));
-        		}
-        		else	//update existing user
-        		{
-        			User u_temp = user_map.get(bidder_id);
-        			u_temp.user_bidder_rating = bidder_rating;
-        			u_temp.user_country = bidder_country;
-        			u_temp.user_location = bidder_loc;
-        			user_map.put(bidder_id, u_temp);
-        		}
+        		Bid bid_temp = new Bid(bidder_id, bid_time, bid_amount, item_id, bidder_loc, bidder_country);
+        		bidList.add(bid_temp);
         	}
         	
         	//TODO: categories
-        	Element[] categories = getElementsByTagNameNR(item, "Category");
+        	Element[] categories = getElementsByTagNameNR(items[0], "Category");
+        	ArrayList<String> categoryList = new ArrayList<String>();
         	for(Element category : categories)
         	{
         		String cat_name = getElementText(category);
-        		if(!category_map.containsKey(item_id))
-        		{
-        			Set<String> c_set = new HashSet<String>();
-        			c_set.add(cat_name);
-        			category_map.put(item_id, c_set);
-        		}
-        		else
-        		{
-        			Set<String> c_set = category_map.get(item_id);
-        			c_set.add(cat_name);
-        			category_map.put(item_id, c_set);
-        		}
+        		categoryList.add(cat_name);
         	}
-        }
+        	
+        	request.setAttribute("ItemID", item_id);
+        	request.setAttribute("Name", name);
+        	request.setAttribute("Categories", categoryList);
+        	request.setAttribute("Currently", currently);
+        	request.setAttribute("Buy_Price", buy_price);
+        	request.setAttribute("Started", started);
+        	request.setAttribute("Ends", ends);
+        	request.setAttribute("Description", description);
+        	request.setAttribute("First_Bid", first_bid);
+        	request.setAttribute("Number_of_Bids", num_of_bids);
+        	request.setAttribute("Bids", bidList);
+        	request.setAttribute("Location", location);
+        	request.setAttribute("Latitude", latitude);
+        	request.setAttribute("Longitude", longitude);
+        	request.setAttribute("seller_id", seller_id);
+        	request.setAttribute("seller_rating", seller_rating);
     }
 }
