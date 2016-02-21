@@ -416,5 +416,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("Longitude", longitude);
         	request.setAttribute("seller_id", seller_id);
         	request.setAttribute("seller_rating", seller_rating);
+        	
+        	request.getRequestDispatcher("/itemResult.jsp").forward(request, response);
     }
 }
