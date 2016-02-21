@@ -34,46 +34,6 @@ import edu.ucla.cs.cs144.AuctionSearchClient;
 public class ItemServlet extends HttpServlet implements Servlet {
        
     public ItemServlet() {}
-  	
-  	public static class User
-    {
-		//TODO: Fill this out (and other helper classes if necessary)
-    	String user_id;
-    	String user_location;
-    	String user_country;
-    	String user_seller_rating;
-    	String user_bidder_rating;
-    	
-    	//constructor
-  	User(String user_id, String user_location, String user_country, String user_seller_rating, String user_bidder_rating)
-  	{
-  		this.user_id = user_id;
-  		if(user_location.isEmpty()){
-  			this.user_location = "";
-  		}
-  		else{
-  			this.user_location = user_location;
-  		}
-  		if(user_country.isEmpty()){
-  			this.user_country = "";
-  		}
-  		else{
-  			this.user_country = user_country;
-  		}
-  		if(user_seller_rating.isEmpty()){
-  			this.user_seller_rating = "";
-  		}
-  		else{
-  			this.user_seller_rating = user_seller_rating;
-  		}
-  		if(user_bidder_rating.isEmpty()){
-  			this.user_bidder_rating = "";
-  		}
-  		else{
-  			this.user_bidder_rating = user_bidder_rating;
-  		}
-  	}
-    }
 	
 	public static class Bid
 	{
@@ -92,90 +52,6 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			this.item_id = item_id;
 			this.bidder_location = bidder_location;
 			this.bidder_country = bidder_country;
-		}
-	}
-	
-	public static class Item
-	{
-		String item_id;
-		String name;
-		String currently;
-		String buy_price;
-		String first_bid;
-		String num_of_bids;
-		String location;
-		String longitude;
-		String latitude;
-		String country;
-		String started;
-		String ends;
-		String seller_id;
-		String description;
-		
-		Item(String item_id, String name, String currently, String buy_price, String first_bid, String num_of_bids, String location,
-				String longitude,
-				String latitude,
-				String country,
-				String started,
-				String ends,
-				String seller_id,
-				String description)
-		{
-					this.item_id = item_id;
-					this.name = name;
-					this.currently = currently;
-					if(buy_price.isEmpty()){
-						this.buy_price = "";
-					}
-					else{
-						this.buy_price =  buy_price;
-					}
-					this.first_bid = first_bid;
-					this.num_of_bids = num_of_bids;
-					if(location.isEmpty())
-						this.location = "";
-					else{
-						this.location = location;
-					}
-					if(longitude.isEmpty()){
-						this.longitude = "";
-					}
-					else{
-						this.longitude = longitude;
-					}
-					if(latitude.isEmpty()){
-						this.latitude = "";
-					}
-					else{
-						this.latitude = latitude;
-					}
-					if(country.isEmpty()){
-						this.country = "";
-					}
-					else{
-						this.country = country;
-					}
-					this.started = started;
-					this.ends = ends;
-					this.seller_id = seller_id;
-					if(description.length() > 4000){
-						this.description = description.substring(0, 4000);
-					}
-					else{
-						this.description = description;
-					}
-		}
-	}
-	
-	public static class Category
-	{
-		Set<String> category;
-		String item_id;
-		
-		Category(Set<String> category, String item_id)
-		{
-			this.category = category;
-			this.item_id = item_id;
 		}
 	}
   
@@ -343,32 +219,32 @@ public class ItemServlet extends HttpServlet implements Servlet {
         Element root_element = doc.getDocumentElement();
 
         //start getting the "Items"
-        Element[] items = getElementsByTagNameNR(root_element, "Item");
+        //Element[] items = getElementsByTagNameNR(root_element, "Item");
 
-        	String item_id = items[0].getAttribute("ItemID");
-        	String name = getElementTextByTagNameNR(items[0], "Name");
-        	String currently = strip(getElementTextByTagNameNR(items[0], "Currently"));
-        	String buy_price = strip(getElementTextByTagNameNR(items[0], "Buy_Price"));
-        	String first_bid = strip(getElementTextByTagNameNR(items[0], "First_Bid"));
-        	String num_of_bids = getElementTextByTagNameNR(items[0], "Number_Of_Bids");
-        	String location = getElementTextByTagNameNR(items[0], "Location");
+        	String item_id = root_element.getAttribute("ItemID");
+        	String name = getElementTextByTagNameNR(root_element, "Name");
+        	String currently = strip(getElementTextByTagNameNR(root_element, "Currently"));
+        	String buy_price = strip(getElementTextByTagNameNR(root_element, "Buy_Price"));
+        	String first_bid = strip(getElementTextByTagNameNR(root_element, "First_Bid"));
+        	String num_of_bids = getElementTextByTagNameNR(root_element, "Number_Of_Bids");
+        	String location = getElementTextByTagNameNR(root_element, "Location");
         	
-        	Element e_location = getElementByTagNameNR(items[0], "Location");
+        	Element e_location = getElementByTagNameNR(root_element, "Location");
         	String latitude = e_location.getAttribute("Latitude");
         	String longitude = e_location.getAttribute("Longitude");
         	
-        	String country = getElementTextByTagNameNR(items[0], "Country");
-        	String started = convert_To_SQL_DateTime(getElementTextByTagNameNR(items[0], "Started"));
-        	String ends = convert_To_SQL_DateTime(getElementTextByTagNameNR(items[0], "Ends"));
+        	String country = getElementTextByTagNameNR(root_element, "Country");
+        	String started = convert_To_SQL_DateTime(getElementTextByTagNameNR(root_element, "Started"));
+        	String ends = convert_To_SQL_DateTime(getElementTextByTagNameNR(root_element, "Ends"));
         	
         	//add to user_map
-        	Element seller = getElementByTagNameNR(items[0], "Seller");
+        	Element seller = getElementByTagNameNR(root_element, "Seller");
         	String seller_id = seller.getAttribute("UserID");
         	String seller_rating = seller.getAttribute("Rating");
         	
-        	String description = getElementTextByTagNameNR(items[0], "Description");
+        	String description = getElementTextByTagNameNR(root_element, "Description");
         	
-        	Element bids_parent = getElementByTagNameNR(items[0], "Bids");
+        	Element bids_parent = getElementByTagNameNR(root_element, "Bids");
         	Element[] bids = getElementsByTagNameNR(bids_parent, "Bid");
         	ArrayList<Bid> bidList = new ArrayList();
         	//TODO: get all the bids
@@ -388,7 +264,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	}
         	
         	//TODO: categories
-        	Element[] categories = getElementsByTagNameNR(items[0], "Category");
+        	Element[] categories = getElementsByTagNameNR(root_element, "Category");
         	ArrayList<String> categoryList = new ArrayList<String>();
         	for(Element category : categories)
         	{
