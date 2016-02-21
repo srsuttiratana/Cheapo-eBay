@@ -34,10 +34,6 @@ import edu.ucla.cs.cs144.AuctionSearchClient;
 public class ItemServlet extends HttpServlet implements Servlet {
        
     public ItemServlet() {}
-
-  //store the bid keys so that we know whether there are duplicate bids
-  	//optional
-  	static Set<String> bid_set = new HashSet<String>();
   	
   	public static class User
     {
