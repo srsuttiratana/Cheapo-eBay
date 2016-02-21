@@ -99,10 +99,10 @@ public class ItemServlet extends HttpServlet implements Servlet {
 	
 	public static class Bid
 	{
-		String bidder_id;
-		String bid_time;
-		String bid_amount;
-		String item_id;
+		public String bidder_id;
+		public String bid_time;
+		public String bid_amount;
+		public String item_id;
 		
 		Bid(String bidder_id, String bid_time, String bid_amount, String item_id)
 		{
