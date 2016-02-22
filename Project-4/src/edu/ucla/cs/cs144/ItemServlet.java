@@ -43,8 +43,9 @@ public class ItemServlet extends HttpServlet implements Servlet {
 		public String item_id;
 		public String bidder_location;
 		public String bidder_country;
+		public String bidder_rating;
 		
-		Bid(String bidder_id, String bid_time, String bid_amount, String item_id, String bidder_location, String bidder_country)
+		Bid(String bidder_id, String bid_time, String bid_amount, String item_id, String bidder_location, String bidder_country, String bidder_rating)
 		{
 			this.bidder_id = bidder_id;
 			this.bid_time = bid_time;
@@ -52,6 +53,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			this.item_id = item_id;
 			this.bidder_location = bidder_location;
 			this.bidder_country = bidder_country;
+			this.bidder_rating = bidder_rating;
 		}
 	}
   
@@ -259,7 +261,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
         		String bid_time = convert_To_SQL_DateTime(getElementTextByTagNameNR(bid, "Time"));
         		String bid_amount = strip(getElementTextByTagNameNR(bid, "Amount"));
         		
-        		Bid bid_temp = new Bid(bidder_id, bid_time, bid_amount, item_id, bidder_loc, bidder_country);
+        		Bid bid_temp = new Bid(bidder_id, bid_time, bid_amount, item_id, bidder_loc, bidder_country, bidder_rating);
         		bidList.add(bid_temp);
         	}
         	
