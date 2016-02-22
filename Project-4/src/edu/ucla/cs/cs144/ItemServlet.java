@@ -283,11 +283,21 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("Ends", ends);
         	request.setAttribute("Description", description);
         	request.setAttribute("First_Bid", first_bid);
-        	request.setAttribute("Number_of_Bids", num_of_bids);
+			if(num_of_bids == "")
+				request.setAttribute("Number_of_Bids", "0");
+			else
+				request.setAttribute("Number_of_Bids", num_of_bids);
         	request.setAttribute("Bids", bidList);
         	request.setAttribute("Location", location);
-        	request.setAttribute("Latitude", latitude);
-        	request.setAttribute("Longitude", longitude);
+			if(latitude == "")
+				request.setAttribute("Latitude", "0.0");
+			else
+				request.setAttribute("Latitude", latitude);
+				
+			if(longitude == "")
+				request.setAttribute("Longitude", "0.0");
+			else
+				request.setAttribute("Longitude", longitude);
         	request.setAttribute("seller_id", seller_id);
         	request.setAttribute("seller_rating", seller_rating);
         	
