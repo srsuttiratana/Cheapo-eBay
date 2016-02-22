@@ -278,7 +278,10 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("Name", name);
         	request.setAttribute("Categories", categoryList);
         	request.setAttribute("Currently", currently);
-        	request.setAttribute("Buy_Price", buy_price);
+			if(buy_price != "")
+				request.setAttribute("Buy_Price", buy_price);
+			else
+				request.setAttribute("Buy_Price", "N/A");
         	request.setAttribute("Started", started);
         	request.setAttribute("Ends", ends);
         	request.setAttribute("Description", description);

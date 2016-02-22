@@ -43,7 +43,6 @@
 
 <br>
 <h2>Other Item Information</h2>
-<br>
 <div>
 <p><b>Currently: </b> <%= request.getAttribute("Currently")%></p>
 <p><b>Buy Price: </b> <%= request.getAttribute("Buy_Price")%></p>
@@ -78,7 +77,6 @@
 <p><b>Longitude: </b> <%= request.getAttribute("Longitude")%></p>
 </div>
 <h2> Seller Information </h2>
-<br>
 <p><b>Seller ID: </b> <%= request.getAttribute("seller_id")%></p>
 <p><b>Seller Rating: </b> <%= request.getAttribute("seller_rating")%></p>
 </html>
