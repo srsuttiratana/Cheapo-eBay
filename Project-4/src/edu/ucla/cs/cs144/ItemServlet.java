@@ -220,6 +220,9 @@ public class ItemServlet extends HttpServlet implements Servlet {
     	{
     		System.out.println("Parser configuration exception");
     	}
+		
+		if(xmlData != "")
+		{
     	InputSource source = new InputSource(new StringReader(xmlData));
     	Document doc = null;
     	if (docBuilder == null)
@@ -252,10 +255,11 @@ public class ItemServlet extends HttpServlet implements Servlet {
         
         //fetch the root of the XML Document
         Element root_element = doc.getDocumentElement();
-
+		
         //start getting the "Items"
         //Element[] items = getElementsByTagNameNR(root_element, "Item");
-
+			if(root_element != null)
+			{
         	String item_id = root_element.getAttribute("ItemID");
         	String name = getElementTextByTagNameNR(root_element, "Name");
         	String currently = strip(getElementTextByTagNameNR(root_element, "Currently"));
@@ -369,6 +373,54 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("seller_id", seller_id);
         	request.setAttribute("seller_rating", seller_rating);
         	}
+			
+			else
+			{
+				request.setAttribute("ItemID", queryId);
+			request.setAttribute("Name", "N/A");
+			ArrayList<String> categoryList = new ArrayList<String>();
+        	request.setAttribute("Categories", categoryList);
+			request.setAttribute("Country", "N/A");
+        	request.setAttribute("Currently", "N/A");
+			request.setAttribute("Buy_Price", "N/A");
+        	request.setAttribute("Started", "N/A");
+        	request.setAttribute("Ends", "N/A");
+        	request.setAttribute("Description", "N/A");
+        	request.setAttribute("First_Bid", "N/A");
+			request.setAttribute("Number_of_Bids", "N/A");
+			ArrayList<Bid> bidList = new ArrayList();
+        	request.setAttribute("Bids", bidList);
+        	request.setAttribute("Location", "N/A");
+			request.setAttribute("Latitude", "0.0");
+			request.setAttribute("Longitude", "0.0");
+        	request.setAttribute("seller_id", "N/A");
+        	request.setAttribute("seller_rating", "N/A");
+			}
+			}
+			else
+			{
+				request.setAttribute("ItemID", queryId);
+			request.setAttribute("Name", "N/A");
+			ArrayList<String> categoryList = new ArrayList<String>();
+        	request.setAttribute("Categories", categoryList);
+			request.setAttribute("Country", "N/A");
+        	request.setAttribute("Currently", "N/A");
+			request.setAttribute("Buy_Price", "N/A");
+        	request.setAttribute("Started", "N/A");
+        	request.setAttribute("Ends", "N/A");
+        	request.setAttribute("Description", "N/A");
+        	request.setAttribute("First_Bid", "N/A");
+			request.setAttribute("Number_of_Bids", "N/A");
+			ArrayList<Bid> bidList = new ArrayList();
+        	request.setAttribute("Bids", bidList);
+        	request.setAttribute("Location", "N/A");
+			request.setAttribute("Latitude", "0.0");
+			request.setAttribute("Longitude", "0.0");
+        	request.setAttribute("seller_id", "N/A");
+        	request.setAttribute("seller_rating", "N/A");
+			}
+			
+			}
         	request.getRequestDispatcher("/itemResult.jsp").forward(request, response);
     }
 }
