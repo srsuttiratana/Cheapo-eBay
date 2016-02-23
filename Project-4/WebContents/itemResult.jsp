@@ -16,7 +16,7 @@
 </script> 
 <script type="text/javascript"> 
   function initialize() { 
-    var latlng = new google.maps.LatLng(34.063509,-118.44541); 
+    var latlng = new google.maps.LatLng(<%= request.getAttribute("Latitude")%>,<%= request.getAttribute("Longitude")%>); 
     var myOptions = { 
       zoom: 14, // default is 8  
       center: latlng, 
@@ -24,7 +24,6 @@
     }; 
     var map = new google.maps.Map(document.getElementById("map_canvas"), 
         myOptions); 
-
   } 
 
 </script> 

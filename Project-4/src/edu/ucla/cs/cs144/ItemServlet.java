@@ -203,8 +203,8 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			ArrayList<Bid> bidList = new ArrayList();
         	request.setAttribute("Bids", bidList);
         	request.setAttribute("Location", "N/A");
-			request.setAttribute("Latitude", "N/A");
-			request.setAttribute("Longitude", "N/A");
+			request.setAttribute("Latitude", "0.0");
+			request.setAttribute("Longitude", "0.0");
         	request.setAttribute("seller_id", "N/A");
         	request.setAttribute("seller_rating", "N/A");
 		}
@@ -327,7 +327,13 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("ItemID", item_id);
         	request.setAttribute("Name", name);
         	request.setAttribute("Categories", categoryList);
-			request.setAttribute("Country", country);
+			if(country != "")
+				request.setAttribute("Country", country);
+			else
+			{
+				//request.setAttribute("Country", "USA");
+				request.setAttribute("Country", "N/A");
+			}
         	request.setAttribute("Currently", currently);
 			if(buy_price != "")
 				request.setAttribute("Buy_Price", buy_price);
@@ -342,7 +348,13 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			else
 				request.setAttribute("Number_of_Bids", num_of_bids);
         	request.setAttribute("Bids", bidList);
-        	request.setAttribute("Location", location);
+			if(location == "")
+			{
+				//request.setAttribute("Location", "Los Angeles, CA");
+				request.setAttribute("Location", "N/A");
+			}
+			else
+				request.setAttribute("Location", location);
 			if(latitude == "")
 				request.setAttribute("Latitude", "0.0");
 			else
