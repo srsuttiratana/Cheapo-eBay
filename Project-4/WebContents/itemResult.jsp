@@ -80,6 +80,11 @@ window.onload = function () {
 
 <h1> Search Result for Item ID: <%= request.getAttribute("ItemID") %></h1>
 <h2>Name: <%= request.getAttribute("Name") %></h2>
+
+<h2> Seller Information </h2>
+<p><b>Seller ID: </b> <%= request.getAttribute("seller_id")%></p>
+<p><b>Seller Rating: </b> <%= request.getAttribute("seller_rating")%></p>
+
 <h2>Item Categories</h2>
 <%
 	ArrayList<String> Categories = (ArrayList<String>) request.getAttribute("Categories"); 
@@ -129,8 +134,6 @@ window.onload = function () {
 <p><b>Longitude: </b> <%= request.getAttribute("Longitude")%></p>
 </div>
 <div id="map_canvas" style="width:100%; height:100%"></div> 
-<h2> Seller Information </h2>
-<p><b>Seller ID: </b> <%= request.getAttribute("seller_id")%></p>
-<p><b>Seller Rating: </b> <%= request.getAttribute("seller_rating")%></p>
+
 </body> 
 </html>
