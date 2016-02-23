@@ -192,6 +192,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			request.setAttribute("Name", "N/A");
 			ArrayList<String> categoryList = new ArrayList<String>();
         	request.setAttribute("Categories", categoryList);
+			request.setAttribute("Country", "N/A");
         	request.setAttribute("Currently", "N/A");
 			request.setAttribute("Buy_Price", "N/A");
         	request.setAttribute("Started", "N/A");
@@ -326,6 +327,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("ItemID", item_id);
         	request.setAttribute("Name", name);
         	request.setAttribute("Categories", categoryList);
+			request.setAttribute("Country", country);
         	request.setAttribute("Currently", currently);
 			if(buy_price != "")
 				request.setAttribute("Buy_Price", buy_price);

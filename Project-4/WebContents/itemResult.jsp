@@ -24,6 +24,7 @@
     }; 
     var map = new google.maps.Map(document.getElementById("map_canvas"), 
         myOptions); 
+
   } 
 
 </script> 
@@ -108,6 +109,7 @@
 <h2> Location </h2>
 <div>
 <p><b>Location: </b> <%= request.getAttribute("Location")%></p>
+<p><b>Country: </b> <%= request.getAttribute("Country")%></p>
 <p><b>Latitude: </b> <%= request.getAttribute("Latitude")%></p>
 <p><b>Longitude: </b> <%= request.getAttribute("Longitude")%></p>
 </div>
