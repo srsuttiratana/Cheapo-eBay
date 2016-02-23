@@ -26,6 +26,20 @@
 
    <button type="submit" name="submit">Submit</button>
 </form>
+<br>
+<form name = "query" action = "./search" method="GET" action="" style="text-align:center"> 
+<!-- onsubmit="return checkForm(this);"-->
+<label>Keyword Search</label>
+   <br><br>
+   <div>
+		<input type="text" name="q" required>
+   </div>
+   <input name="numResultsToSkip" value="0" type="hidden">
+	<input name="numResultsToReturn" value="20" type="hidden">
+   <br><br>
+
+   <button type="submit" name="submit">Submit</button>
+</form>
 
 <h1> Search Result for Item ID: <%= request.getAttribute("ItemID") %></h1>
 <h2>Name: <%= request.getAttribute("Name") %></h2>

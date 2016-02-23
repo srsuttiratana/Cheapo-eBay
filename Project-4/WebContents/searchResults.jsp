@@ -33,7 +33,7 @@
 %>
 <div>
 	<h1>Search Results for '<%= (String)request.getAttribute("q")%>'</h1>
-	<h2>Obtained <%= results.length%> results</h2>
+	<h2>Obtained <%= results.length%> results for this page</h2>
 	<ul>
 		<% for (SearchResult item: results) { %>
 			<a href="/eBay/item?id=<%=item.getItemId()%>"><li>ID:<%= item.getItemId() %> Item Name:<%= item.getName()%></li></a>	
