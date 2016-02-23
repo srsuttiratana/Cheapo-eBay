@@ -4,6 +4,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<script type="text/javascript" src="autosuggest.js"></script>
+<script type="text/javascript" src="suggestions.js"></script>
+<link rel="stylesheet" type="text/css" href="autosuggest.css" /> 
+<script type="text/javascript">
+window.onload = function () {
+           var oTextbox = new AutoSuggestControl(document.getElementById("keywordtextbox"), new StateSuggestions()); 
+        }
+</script>
 <title>Cheapo eBay</title>
 </head>
 <h1 style="text-align:center">Cheapo</h1>
@@ -19,7 +27,7 @@
 <label>Keyword Search</label>
    <br><br>
    <div>
-		<input type="text" name="q" required>
+		<input id = "keywordtextbox" type="text" name="q" required>
    </div>
    <input name="numResultsToSkip" value="0" type="hidden">
 	<input name="numResultsToReturn" value="20" type="hidden">
