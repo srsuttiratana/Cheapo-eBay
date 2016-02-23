@@ -177,6 +177,38 @@ public class ItemServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
     	String queryId = request.getParameter("id");
+		int test;
+		boolean isInt = true;
+		
+		try
+		{
+			test = Integer.parseInt(queryId);
+		}
+		catch(NumberFormatException e)
+		{
+			isInt = false;
+				
+			request.setAttribute("ItemID", queryId);
+			request.setAttribute("Name", "N/A");
+			ArrayList<String> categoryList = new ArrayList<String>();
+        	request.setAttribute("Categories", categoryList);
+        	request.setAttribute("Currently", "N/A");
+			request.setAttribute("Buy_Price", "N/A");
+        	request.setAttribute("Started", "N/A");
+        	request.setAttribute("Ends", "N/A");
+        	request.setAttribute("Description", "N/A");
+        	request.setAttribute("First_Bid", "N/A");
+			request.setAttribute("Number_of_Bids", "N/A");
+			ArrayList<Bid> bidList = new ArrayList();
+        	request.setAttribute("Bids", bidList);
+        	request.setAttribute("Location", "N/A");
+			request.setAttribute("Latitude", "N/A");
+			request.setAttribute("Longitude", "N/A");
+        	request.setAttribute("seller_id", "N/A");
+        	request.setAttribute("seller_rating", "N/A");
+		}
+		if(isInt)
+		{
     	String xmlData = AuctionSearchClient.getXMLDataForItemId(queryId);
     	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     	DocumentBuilder docBuilder = null;
@@ -320,7 +352,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
 				request.setAttribute("Longitude", longitude);
         	request.setAttribute("seller_id", seller_id);
         	request.setAttribute("seller_rating", seller_rating);
-        	
+        	}
         	request.getRequestDispatcher("/itemResult.jsp").forward(request, response);
     }
 }
