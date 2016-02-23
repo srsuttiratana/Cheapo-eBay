@@ -28,9 +28,9 @@ public class ProxyServlet extends HttpServlet implements Servlet {
 		
 		URL baseURL = new URL(baseURLSearch);
 		
-		URLConnection urlConnection = baseURL.openConnection();
+		HttpURLConnection urlConnection = (HttpURLConnection) baseURL.openConnection();
 		urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 		
 		String input = br.readLine();
