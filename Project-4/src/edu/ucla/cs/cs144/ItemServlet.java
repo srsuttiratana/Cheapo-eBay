@@ -343,10 +343,8 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("Ends", ends);
         	request.setAttribute("Description", description);
         	request.setAttribute("First_Bid", first_bid);
-			if(num_of_bids == "")
-				request.setAttribute("Number_of_Bids", "0");
-			else
-				request.setAttribute("Number_of_Bids", num_of_bids);
+			
+			request.setAttribute("Number_of_Bids", bidList.size());
         	request.setAttribute("Bids", bidList);
 			if(location == "")
 			{
