@@ -250,8 +250,25 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	Element[] bids = getElementsByTagNameNR(bids_parent, "Bid");
         	ArrayList<Bid> bidList = new ArrayList();
         	//TODO: get all the bids
+			/*
         	for(Element bid : bids)
         	{
+        		Element e_bidder = getElementByTagNameNR(bid, "Bidder");
+        		String bidder_rating = e_bidder.getAttribute("Rating");
+        		String bidder_id = e_bidder.getAttribute("UserID");
+        		String bidder_loc = getElementTextByTagNameNR(e_bidder, "Location");
+        		String bidder_country = getElementTextByTagNameNR(e_bidder, "Country");
+        		
+        		String bid_time = convert_To_SQL_DateTime(getElementTextByTagNameNR(bid, "Time"));
+        		String bid_amount = strip(getElementTextByTagNameNR(bid, "Amount"));
+        		
+        		Bid bid_temp = new Bid(bidder_id, bid_time, bid_amount, item_id, bidder_loc, bidder_country, bidder_rating);
+        		bidList.add(bid_temp);
+        	}*/
+			
+			for(int i = bids.length - 1; i >=0; i--)
+        	{
+				Element bid = bids[i];
         		Element e_bidder = getElementByTagNameNR(bid, "Bidder");
         		String bidder_rating = e_bidder.getAttribute("Rating");
         		String bidder_id = e_bidder.getAttribute("UserID");
