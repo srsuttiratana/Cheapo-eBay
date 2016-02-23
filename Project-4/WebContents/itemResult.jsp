@@ -15,18 +15,27 @@
     src="http://maps.google.com/maps/api/js?sensor=false"> 
 </script> 
 <script type="text/javascript"> 
-  function initialize() { 
-    var latlng = new google.maps.LatLng(<%= request.getAttribute("Latitude")%>,<%= request.getAttribute("Longitude")%>); 
-    var myOptions = { 
-      zoom: 14, // default is 8  
-      center: latlng, 
-      mapTypeId: google.maps.MapTypeId.ROADMAP 
-    }; 
-    var map = new google.maps.Map(document.getElementById("map_canvas"), 
-        myOptions); 
-  } 
-
-</script> 
+	  function initialize() { 
+	  	geocoder=new google.maps.Geocoder();
+	    var latlng = new google.maps.LatLng(<%= request.getAttribute("Latitude")%>,<%= request.getAttribute("Longitude")%>); 
+	    var myOptions = { 
+	      zoom: 14, // default is 8  
+	      center: latlng, 
+	      mapTypeId: google.maps.MapTypeId.ROADMAP 
+	    }; 
+	    var map = new google.maps.Map(document.getElementById("map_canvas"), 
+	        myOptions); 
+	    geocoder.geocode({'address': '<%=request.getAttribute("Location")%>, <%=request.getAttribute("Country") %>'}, function(results, status) {
+	    	if (status == google.maps.GeocoderStatus.OK) {
+	    		map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });	    		
+	    	}
+	    });
+	  } 
+	</script>
 <meta charset="UTF-8">
 <title>Cheapo eBay</title>
 </head>
