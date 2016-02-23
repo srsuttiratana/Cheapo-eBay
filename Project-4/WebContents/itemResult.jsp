@@ -4,6 +4,29 @@
 <!DOCTYPE html>
 <html style = "font-family:Calibri">
 <head>
+<head> 
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+<style type="text/css"> 
+  html { height: 100% } 
+  body { height: 100%; margin: 0px; padding: 0px } 
+  #map_canvas { height: 100% } 
+</style> 
+<script type="text/javascript" 
+    src="http://maps.google.com/maps/api/js?sensor=false"> 
+</script> 
+<script type="text/javascript"> 
+  function initialize() { 
+    var latlng = new google.maps.LatLng(34.063509,-118.44541); 
+    var myOptions = { 
+      zoom: 14, // default is 8  
+      center: latlng, 
+      mapTypeId: google.maps.MapTypeId.ROADMAP 
+    }; 
+    var map = new google.maps.Map(document.getElementById("map_canvas"), 
+        myOptions); 
+  } 
+
+</script> 
 <meta charset="UTF-8">
 <title>Cheapo eBay</title>
 </head>
@@ -11,10 +34,8 @@
 
 <p style="text-align:center"><a href="./keywordSearch.html"><img src="eBayLogo.jpg" alt="Website Logo"></a></p>
 <h2 style="text-align:center">Serving you auction items from over 10 years ago...</h2>
-<body>
 
-</body>
-
+<body onload="initialize()"> 
 <form name = "query" action = "./item" method="GET" action="" style="text-align:center"> 
 <!-- onsubmit="return checkForm(this);"-->
 <label>Item ID Search</label>
@@ -90,7 +111,9 @@
 <p><b>Latitude: </b> <%= request.getAttribute("Latitude")%></p>
 <p><b>Longitude: </b> <%= request.getAttribute("Longitude")%></p>
 </div>
+<div id="map_canvas" style="width:100%; height:100%"></div> 
 <h2> Seller Information </h2>
 <p><b>Seller ID: </b> <%= request.getAttribute("seller_id")%></p>
 <p><b>Seller Rating: </b> <%= request.getAttribute("seller_rating")%></p>
+</body> 
 </html>
