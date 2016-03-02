@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html style = "font-family:Calibri">
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="autosuggest.js"></script>
+<script type="text/javascript" src="suggestions.js"></script>
+<link rel="stylesheet" type="text/css" href="autosuggest.css" /> 
+<script type="text/javascript">
+window.onload = function () {
+           var oTextbox = new AutoSuggestControl(document.getElementById("keywordtextbox"), new StateSuggestions()); 
+        }
+</script>
+<title>Cheapo eBay</title>
+</head>
+<h1 style="text-align:center">Cheapo</h1>
+
+<p style="text-align:center"><a href="./keywordSearch.html"><img src="eBayLogo.jpg" alt="Website Logo"></a></p>
+<h2 style="text-align:center">Serving you auction items from over 10 years ago...</h2>
+<body>
+
+</body>
+
+<form name = "query" action = "./search" method="GET" action="" style="text-align:center"> 
+<!-- onsubmit="return checkForm(this);"-->
+<label>Keyword Search</label>
+   <br><br>
+   <div>
+		<input id = "keywordtextbox" type="text" name="q" required>
+   </div>
+   <input name="numResultsToSkip" value="0" type="hidden">
+	<input name="numResultsToReturn" value="20" type="hidden">
+   <br><br>
+
+   <button type="submit" name="submit">Submit</button>
+</form>
+</html>
