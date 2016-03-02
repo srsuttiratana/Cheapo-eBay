@@ -102,6 +102,14 @@ window.onload = function () {
 <div>
 <p><b>Currently: </b> <%= request.getAttribute("Currently")%></p>
 <p><b>Buy Price: </b> <%= request.getAttribute("Buy_Price")%></p>
+<p>
+<% if (!((String) request.getAttribute("Buy_Price")).equals("N/A") && !((String) request.getAttribute("Buy_Price")).equals("")) { %>
+<form action="./item" method="POST">
+	<input hidden="hidden" value="<%=request.getAttribute("ItemID")%>" name="id">
+	<input type="submit" value="Pay Now">
+</form>
+<% } %>
+</p>
 <p><b>Started on: </b> <%= request.getAttribute("Started")%></p>
 <p><b>Ends on: </b> <%= request.getAttribute("Ends")%></p>
 <p><b>Description: </b> <%= request.getAttribute("Description")%></p>
