@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +55,20 @@ public class ItemServlet extends HttpServlet implements Servlet {
 			this.bidder_location = bidder_location;
 			this.bidder_country = bidder_country;
 			this.bidder_rating = bidder_rating;
+		}
+	}
+	
+	public static class Item
+	{
+		public String item_id;
+		public String buy_price;
+		public String item_name;
+		
+		Item(String item_id, String buy_price, String item_name)
+		{
+			this.item_id = item_id;
+			this.buy_price = buy_price;
+			this.item_name = item_name;
 		}
 	}
   
@@ -372,6 +387,10 @@ public class ItemServlet extends HttpServlet implements Servlet {
 				request.setAttribute("Longitude", longitude);
         	request.setAttribute("seller_id", seller_id);
         	request.setAttribute("seller_rating", seller_rating);
+			
+			HttpSession session = request.getSession(true);
+			Item current_item = new Item(item_id, buy_price, name);
+			session.setAttribute("current_item",current_item);
         	}
 			
 			else
@@ -420,7 +439,28 @@ public class ItemServlet extends HttpServlet implements Servlet {
         	request.setAttribute("seller_rating", "N/A");
 			}
 			
+			
+			
 			}
+			
+			
+			
         	request.getRequestDispatcher("/itemResult.jsp").forward(request, response);
     }
+	
+	public void doPost(HttpServletRequest request,
+                     HttpServletResponse response)
+      throws ServletException, IOException {
+		HttpSession session = request.getSession(true);
+		Item current_item = (Item)session.getAttribute("current_item");
+	    if (current_item == null) {
+            String url = "http://"+request.getServerName()+":1448"+request.getContextPath()+"/keywordSearch.html";
+            response.sendRedirect(url);
+		}	
+		request.setAttribute("Name", current_item.item_name);
+		request.setAttribute("ItemID",current_item.item_id);
+		request.setAttribute("Buy_Price",current_item.buy_price);
+
+		request.getRequestDispatcher("/creditCardInput.jsp").forward(request,response);
+	  }
 }
