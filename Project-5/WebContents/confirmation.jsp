@@ -17,6 +17,6 @@
 <h3 style="text-align:center">Item Name: <%= request.getAttribute("Name")%></h3>
 <h3 style="text-align:center">Buy Price: $<%= request.getAttribute("Buy_Price")%></h3>
 <h3 style="text-align:center">Credit Card Number: $<%= request.getAttribute("Credit_Card_Number")%></h3>
-<h3 style="text-align:center">Time: $<%= request.getAttribute("Time")%></h3>
+<h3 style="text-align:center">Time: <%= request.getAttribute("Time")%></h3>
 <br>
 </html>
