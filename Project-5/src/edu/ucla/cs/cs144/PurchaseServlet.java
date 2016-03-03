@@ -41,9 +41,9 @@ public class PurchaseServlet extends HttpServlet implements Servlet {
 			  if (request.isSecure())
 			  {
 				  HttpSession session = request.getSession(true);
-				  String itemID = session.getAttribute("ItemID");
-				  String itemName = session.getAttribute("Name");
-				  String buyPrice = session.getAttribute("Buy_Price");
+				  String itemID = (String)session.getAttribute("ItemID");
+				  String itemName = (String)session.getAttribute("Name");
+				  String buyPrice = (String)session.getAttribute("Buy_Price");
 				  
 				  request.setAttribute("ItemID", itemID);
 				  request.setAttribute("Name", itemName);
@@ -56,9 +56,9 @@ public class PurchaseServlet extends HttpServlet implements Servlet {
 		  catch (Exception e)
 		  {
 				HttpSession session = request.getSession(true);
-				String itemID = session.getAttribute("ItemID");
-				String itemName = session.getAttribute("Name");
-				String buyPrice = session.getAttribute("Buy_Price");
+				String itemID = (String)session.getAttribute("ItemID");
+				String itemName = (String)session.getAttribute("Name");
+				String buyPrice = (String)session.getAttribute("Buy_Price");
 				session.setAttribute("ItemTryingToPurchase", itemID);
 				 
 				request.setAttribute("ItemID", itemID);
