@@ -1,3 +1,2 @@
-There are known problems with the server. If results do not show up, 
-the drop down doesn't work, or there are errors with receiving empty data, etc. then try powering down the virtual machine and 
-restarting it. Then run the html file again.
+1. (4)->(5) and (5)->(6)
+2. The values for buy price are saved in the HTTP session. Therefore, the parameters for the item which include the buy price cannot be manipulated.
