@@ -13,10 +13,15 @@
 <h2 style="text-align:center">Serving you auction items from over 10 years ago...</h2>
 <br>
 <h2 style="text-align:center">Congratulations! You just bought the following item:</h2>
-<h3 style="text-align:center">Item ID: <%= request.getAttribute("ItemID")%></h3>
-<h3 style="text-align:center">Item Name: <%= request.getAttribute("Name")%></h3>
-<h3 style="text-align:center">Buy Price: $<%= request.getAttribute("Buy_Price")%></h3>
-<h3 style="text-align:center">Credit Card Number: $<%= request.getAttribute("Credit_Card_Number")%></h3>
-<h3 style="text-align:center">Time: <%= request.getAttribute("Time")%></h3>
+<h3 style="text-align:center">Item ID:</h3>
+<p style="text-align:center"><%= request.getAttribute("ItemID")%></p>
+<h3 style="text-align:center">Item Name:</h3>
+<p style="text-align:center"><%= request.getAttribute("Name")%></p>
+<h3 style="text-align:center">Buy Price:</h3>
+<p style="text-align:center">$<%= request.getAttribute("Buy_Price")%></p>
+<h3 style="text-align:center">Credit Card Number:</h3>
+<p style="text-align:center">$<%= request.getAttribute("Credit_Card_Number")%></p>
+<h3 style="text-align:center">Time:</h3>
+<p style="text-align:center"><%= request.getAttribute("Time")%></p>
 <br>
 </html>
