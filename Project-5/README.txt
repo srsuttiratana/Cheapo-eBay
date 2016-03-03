@@ -1,2 +1,2 @@
 1. (4)->(5) and (5)->(6)
-2. The values for buy price are saved in the HTTP session. Therefore, the parameters for the item which include the buy price cannot be manipulated.
+2. The values for buy price are saved in the HTTP session, which is created when the user opens the item information page. The HTTP session gets brought from page to page (ex. from the item page to the credit card page to the confirmation page). Therefore, the parameters for the item which include the buy price cannot be manipulated by the user. The servlet retrieves the buy price from the HTTP session when it is needed.
