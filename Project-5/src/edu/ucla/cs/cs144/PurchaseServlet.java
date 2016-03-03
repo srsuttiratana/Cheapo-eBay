@@ -36,7 +36,36 @@ public class PurchaseServlet extends HttpServlet implements Servlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-		  
+		  try
+		  {	
+			  if (request.isSecure())
+			  {
+				  HttpSession session = request.getSession(true);
+				  String itemID = session.getAttribute("ItemID");
+				  String itemName = session.getAttribute("Name");
+				  String buyPrice = session.getAttribute("Buy_Price");
+				  
+				  request.setAttribute("ItemID", itemID);
+				  request.setAttribute("Name", itemName);
+				  request.setAttribute("Buy_Price", buyPrice);
+				  request.setAttribute("Credit_Card_Number", request.getParameter("cardinput"));
+				  request.setAttribute("Time", new Date());
+				  request.getRequestDispatcher("/confirmation.jsp").forward(request, response);
+			  }
+		  }
+		  catch (Exception e)
+		  {
+				HttpSession session = request.getSession(true);
+				String itemID = session.getAttribute("ItemID");
+				String itemName = session.getAttribute("Name");
+				String buyPrice = session.getAttribute("Buy_Price");
+				session.setAttribute("ItemTryingToPurchase", itemID);
+				 
+				request.setAttribute("ItemID", itemID);
+				request.setAttribute("Name", itemName);
+				request.setAttribute("Buy_Price", buyPrice);
+				request.getRequestDispatcher("/creditCardInput.jsp").forward(request, response);
+		  }
 	  }
 	  
 	public void doPost(HttpServletRequest request,
